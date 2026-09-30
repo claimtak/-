@@ -1,7 +1,7 @@
 {
     "name": "मी आजपासून दारू सोडली",
     "short_name": "दारू सोडली",
-    "description": "दारू सोडल्यापासूनचे दिवस मोजणारा ॲप — 3 भाषांमध्ये",
+    "description": "दारू सोडल्यापासूनचे दिवस मोजणारा ॲप",
     "start_url": "./index.html",
     "scope": "./",
     "display": "standalone",
@@ -9,8 +9,6 @@
     "background_color": "#1a1a2e",
     "theme_color": "#1a1a2e",
     "lang": "mr",
-    "dir": "ltr",
-    "categories": ["health", "lifestyle"],
     "icons": [
         {
             "src": "icon-192.png",
