@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>मी आज पासून दारू सोडली</title>
   
-  <!-- PWA Meta Tags -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#b91c1c">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="दारू सोडली">
+
+  <script>
+    // जर युझरची नोंदणी आधीच झाली असेल तर थेट मेन ॲपवर पाठवा
+    if (localStorage.getItem('userName')) {
+      window.location.replace('./app.html');
+    }
+  </script>
 
   <style>
     * {
@@ -23,9 +27,9 @@
     body {
       background-color: #f8fafc;
       color: #1e293b;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
       text-align: center;
       padding: 16px;
     }
@@ -60,10 +64,7 @@
       font-weight: 700;
       font-size: 1rem;
       margin-bottom: 28px;
-      display: inline-block;
     }
-    
-    /* इन्स्टॉल बटन */
     .btn-install {
       background-color: #dc2626;
       color: #ffffff;
@@ -76,16 +77,9 @@
       width: 100%;
       max-width: 320px;
       box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
-      display: none; /* आधी लपवून ठेवले जाईल, पात्र असल्यास JS द्वारे दिसेल */
+      display: none;
       margin-bottom: 14px;
-      transition: transform 0.1s, background-color 0.2s;
     }
-    .btn-install:active {
-      transform: scale(0.98);
-      background-color: #b91c1c;
-    }
-
-    /* पुढे जा / नोंदणी बटन */
     .btn-start {
       background-color: #f1f5f9;
       color: #334155;
@@ -98,12 +92,7 @@
       width: 100%;
       max-width: 320px;
       font-size: 1.05rem;
-      transition: background-color 0.2s;
     }
-    .btn-start:active {
-      background-color: #e2e8f0;
-    }
-
     footer {
       margin-top: 32px;
       padding-top: 16px;
@@ -129,13 +118,11 @@
       ५,२३,८४७+ लोकांनी संकल्प केला
     </div>
 
-    <!-- PWA Install Button -->
     <button id="installBtn" class="btn-install">
       📲 ॲप इन्स्टॉल करा
     </button>
 
-    <!-- थेट ॲप सुरू करण्यासाठी पर्याय -->
-    <a href="./register.html" class="btn-start">वेबवर पुढे जा &rarr;</a>
+    <a href="./register.html" class="btn-start">सुरुवात करा &rarr;</a>
   </div>
 
   <footer>
@@ -149,70 +136,50 @@
   <script>
     let deferredPrompt = null;
     const installBtn = document.getElementById('installBtn');
-
-    // १. ॲप आधीच इन्स्टॉल झालेले आहे का ते तपासणे
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     const isAlreadyInstalled = localStorage.getItem('pwaInstalled') === 'true';
 
-    // २. Service Worker नोंदणी करणे
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker Registered!', reg))
-          .catch((err) => console.error('SW Error:', err));
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
 
-    // ३. इन्स्टॉल नसेल तरच बटन दाखवणे
     if (!isStandalone && !isAlreadyInstalled) {
-      // ब्राऊझरचा इन्स्टॉल प्रॉम्प्ट पकडणे
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        if (installBtn) {
-          installBtn.style.display = 'block';
-        }
+        if (installBtn) installBtn.style.display = 'block';
       });
 
-      // फॉलबॅक: जर इव्हेंट उशिरा आला तरी बटण दाखवा
       setTimeout(() => {
         if (!isStandalone && !isAlreadyInstalled && installBtn) {
           installBtn.style.display = 'block';
         }
       }, 1000);
     } else {
-      // ॲप आधीच इन्स्टॉल असल्यास बटन कायमचे बंद ठेवा
-      if (installBtn) {
-        installBtn.style.display = 'none';
-      }
+      if (installBtn) installBtn.style.display = 'none';
     }
 
-    // ४. बटण दाबल्यावर इन्स्टॉल पॉपअप उघडणे
     if (installBtn) {
       installBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
-          console.log('User choice:', outcome);
           if (outcome === 'accepted') {
             localStorage.setItem('pwaInstalled', 'true');
             installBtn.style.display = 'none';
           }
           deferredPrompt = null;
         } else {
-          // जर अंतर्गत इव्हेंट आधीच निघून गेला असेल तर सूचना
           alert('ॲप इन्स्टॉल करण्यासाठी:\nवर उजव्या कोपऱ्यातील ३ डॉट्सवर (⋮) क्लिक करा आणि "Install and create shortcut" निवडा.');
         }
       });
     }
 
-    // ५. ॲप यशस्वीरीत्या इन्स्टॉल झाल्यावर बटन बंद करणे आणि मेमरीत नोंद ठेवणे
     window.addEventListener('appinstalled', () => {
       localStorage.setItem('pwaInstalled', 'true');
-      if (installBtn) {
-        installBtn.style.display = 'none';
-      }
-      console.log('ॲप इन्स्टॉल झाले असून बटन कायमचे लपवण्यात आले आहे.');
+      if (installBtn) installBtn.style.display = 'none';
     });
   </script>
 </body>
