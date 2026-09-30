@@ -19,12 +19,15 @@
 
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<!-- html2canvas — स्क्रीनशॉट साठी -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
 <canvas id="confettiCanvas"></canvas>
 
-<div class="container">
+<div class="container" id="captureArea">
 
     <div class="lang-switch" role="tablist">
         <button class="lang-btn active" data-lang="mr" type="button">मराठी</button>
@@ -36,10 +39,8 @@
 
     <div class="confidence-badge" id="confidenceBadge">तुमचा प्रवास सुरू झाला आहे 🌱</div>
 
-    <!-- Highest Record Badge -->
     <div class="record-badge" id="recordBadge" style="display:none;"></div>
 
-    <!-- Counter Box -->
     <div class="counter-box" id="counterBox">
         <div class="rainbow-particles" id="rainbowParticles"></div>
         <div class="fireworks" id="fireworks"></div>
@@ -51,7 +52,6 @@
         <div class="milestone-badge" id="milestoneBadge" style="display:none;"></div>
     </div>
 
-    <!-- Slipped Button -->
     <button id="slippedBtn" class="slipped-btn" type="button">
         😔 <span id="slippedBtnText">आज मी घसरलो</span>
     </button>
@@ -59,6 +59,11 @@
     <div class="motivation">
         <p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p>
     </div>
+
+    <!-- 📸 डाउनलोड इमेज बटण -->
+    <button id="downloadImageBtn" class="download-image-btn" type="button">
+        📸 <span id="downloadImageBtnText">माझं यश डाउनलोड करा</span>
+    </button>
 
     <button id="installBtn" class="install-btn" type="button" style="display:none;">
         📲 <span id="installBtnText">ॲप डाउनलोड करा</span>
@@ -100,7 +105,6 @@
 
         <p class="modal-hope" id="modalHope">🏆 खरा योद्धा हरतो — पण शरण जात नाही.</p>
 
-        <!-- Highest Record shown here -->
         <div class="modal-record" id="modalRecord" style="display:none;"></div>
 
         <div class="modal-buttons">
