@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>मी आज पासून दारू सोडली - ट्रॅकर</title>
 
-  <!-- PWA Meta Tags -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#b91c1c">
   <meta name="mobile-web-app-capable" content="yes">
@@ -35,8 +34,6 @@
       flex-direction: column;
       flex: 1;
     }
-
-    /* टॉप प्रोफाइल हेडर */
     .top-header {
       display: flex;
       align-items: center;
@@ -73,8 +70,6 @@
       font-size: 0.85rem;
       color: #64748b;
     }
-
-    /* भाषा निवड बटणे */
     .lang-switcher {
       display: flex;
       gap: 6px;
@@ -96,8 +91,6 @@
       color: #ffffff;
       border-color: #dc2626;
     }
-
-    /* मुख्य ग्रेडियंट कार्ड */
     .tracker-card {
       background: linear-gradient(135deg, #f97316 0%, #ec4899 50%, #8b5cf6 100%);
       border-radius: 24px;
@@ -106,8 +99,6 @@
       color: white;
       box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.4);
       margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
     }
     .card-title {
       font-size: 1.25rem;
@@ -139,8 +130,6 @@
       opacity: 0.85;
       letter-spacing: 0.5px;
     }
-
-    /* ॲक्शन बटणे */
     .btn-action {
       width: 100%;
       padding: 16px;
@@ -150,7 +139,7 @@
       cursor: pointer;
       border: none;
       margin-bottom: 12px;
-      transition: transform 0.1s ease, filter 0.2s;
+      transition: transform 0.1s ease;
     }
     .btn-action:active {
       transform: scale(0.98);
@@ -165,19 +154,12 @@
       color: #475569;
       border: 1px solid #cbd5e1;
     }
-
-    /* मुख्य इन्स्टॉल बटन */
     .btn-install {
       background-color: #16a34a;
       color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      display: none; /* आधी लपवून ठेवले जाईल */
       box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
     }
-
-    /* तळटीप फुटर */
     footer {
       margin-top: 24px;
       padding: 16px 0;
@@ -198,7 +180,6 @@
 
   <div class="app-container">
     
-    <!-- युझर हेडर -->
     <div class="top-header">
       <div class="user-info-wrap">
         <div class="logo-badge">
@@ -211,14 +192,12 @@
       </div>
     </div>
 
-    <!-- भाषा निवड -->
     <div class="lang-switcher">
       <button class="lang-btn" onclick="setLanguage('mr')">मराठी</button>
       <button class="lang-btn" onclick="setLanguage('hi')">हिंदी</button>
       <button class="lang-btn active" onclick="setLanguage('en')">English</button>
     </div>
 
-    <!-- मुख्य काउंटर कार्ड -->
     <div class="tracker-card">
       <h3 class="card-title" id="cardTitle">I Quit Alcohol From Today</h3>
       
@@ -234,17 +213,15 @@
       </div>
     </div>
 
-    <!-- १. शेअर करा बटन -->
     <button class="btn-action btn-share" id="shareBtn" onclick="shareProgress()">
       Share today's win
     </button>
 
-    <!-- २. घसरलो (Reset) पर्याय -->
     <button class="btn-action btn-slip" id="slipBtn" onclick="handleSlip()">
       I slipped today
     </button>
 
-    <!-- ३. स्क्रीनवरील नवीन इन्स्टॉल बटन -->
+    <!-- इन्स्टॉल नसेल तरच हे दिसेल -->
     <button class="btn-action btn-install" id="installAppBtn">
       📲 ॲप इन्स्टॉल करा (Install App)
     </button>
@@ -258,7 +235,6 @@
   </div>
 
   <script>
-    // १. युझर डेटा लोड करणे (LocalStorage वरून)
     const storedName = localStorage.getItem('userName') || 'Navin Parakh';
     const storedAge = localStorage.getItem('userAge') || '54';
     let startDate = localStorage.getItem('quitStartDate');
@@ -271,7 +247,6 @@
     document.getElementById('userNameDisplay').textContent = `Hello, ${storedName}`;
     document.getElementById('userAgeDisplay').textContent = `Age: ${storedAge}`;
 
-    // २. दिवस मोजणी
     function calculateDays() {
       const start = new Date(startDate);
       const today = new Date();
@@ -281,15 +256,14 @@
     }
     calculateDays();
 
-    // ३. रीसेट / स्लिप लॉजिक
     function handleSlip() {
       if (confirm('नवीन सुरुवात करायची आहे का? तुमचा काऊंटर पुन्हा १ वरून सुरू होईल.')) {
-        localStorage.setItem('quitStartDate', new Date().toISOString());
+        startDate = new Date().toISOString();
+        localStorage.setItem('quitStartDate', startDate);
         calculateDays();
       }
     }
 
-    // ४. शेअर लॉजिक
     function shareProgress() {
       const days = document.getElementById('daysCount').textContent;
       const text = `मी दारू सोडण्याचा संकल्प केला असून आज माझे ${days} दिवस यशस्वीरीत्या पूर्ण झाले आहेत! 🎯`;
@@ -304,43 +278,42 @@
       }
     }
 
-    // ५. Service Worker नोंदणी
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker Registered'))
-          .catch(err => console.error('SW Error:', err));
-      });
-    }
-
-    // ६. PWA इन्स्टॉल इव्हेंट हँडलर
-    let deferredPrompt = null;
+    // इन्स्टॉल स्थिती तपासणी
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isAlreadyInstalled = localStorage.getItem('pwaInstalled') === 'true';
     const installBtn = document.getElementById('installAppBtn');
+    let deferredPrompt = null;
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
+    if (!isStandalone && !isAlreadyInstalled) {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) installBtn.style.display = 'block';
+      });
+    } else {
+      // ॲप आधीच इन्स्टॉल असल्यास हे बटन कायमचे लपवा
+      if (installBtn) installBtn.style.display = 'none';
+    }
 
     if (installBtn) {
       installBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
-          console.log('User response:', outcome);
+          if (outcome === 'accepted') {
+            localStorage.setItem('pwaInstalled', 'true');
+            installBtn.style.display = 'none';
+          }
           deferredPrompt = null;
         } else {
-          // ब्राऊझर इव्हेंट तयार नसल्यास मेनूमधून इन्स्टॉल करण्याची सोपी सूचना
-          alert('ॲप इन्स्टॉल करण्यासाठी:\nवर उजव्या कोपऱ्यातील ३ डॉट्सवर (⋮) क्लिक करा आणि "Install and create shortcut" निवडा.');
+          alert('ॲप इन्स्टॉल करण्यासाठी वर उजव्या कोपऱ्यातील ३ डॉट्सवर (⋮) क्लिक करून Install निवडा.');
         }
       });
     }
 
     window.addEventListener('appinstalled', () => {
-      if (installBtn) {
-        installBtn.style.display = 'none';
-      }
-      alert('ॲप यशस्वीरीत्या मोबाईलमध्ये सेव्ह झाले आहे!');
+      localStorage.setItem('pwaInstalled', 'true');
+      if (installBtn) installBtn.style.display = 'none';
     });
   </script>
 </body>
