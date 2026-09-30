@@ -1,36 +1,25 @@
 {
   "name": "मी आज पासून दारू सोडली",
   "short_name": "दारू सोडली",
-  "description": "दारू सोडण्याचा यश ट्रॅक करा आणि मोटिवेशन मिळवा",
-  "lang": "mr",
-  "dir": "ltr",
-  "start_url": "/stopdrink/index.html",
-  "scope": "/stopdrink/",
-  "id": "/stopdrink/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#15131f",
-  "theme_color": "#c0392b",
-  "categories": ["health", "lifestyle"],
+  "background_color": "#ffffff",
+  "theme_color": "#b91c1c",
+  "description": "दारू सोडण्याचा यश ट्रॅक करणे आणि दैनिक मोटिव्हेशन ॲप",
   "icons": [
     {
-      "src": "/stopdrink/cover.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/stopdrink/cover.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/stopdrink/cover.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
