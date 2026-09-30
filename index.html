@@ -7,6 +7,11 @@
 <meta name="description" content="मी आज पासून दारू सोडली — दिवस मोजा आणि यश शेअर करा.">
 <title>मी आज पासून दारू सोडली</title>
 <link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./cover.png" type="image/png">
+<link rel="apple-touch-icon" href="./cover.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="दारू सोडली">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;800&display=swap" rel="stylesheet">
@@ -98,6 +103,13 @@ if(!sessionStorage.getItem(key)){
   }
 } else {
   showCount(localCount() || 523847);
+}
+
+/* Register service worker (PWA install साठी आवश्यक) */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
 }
 })();
 </script>
