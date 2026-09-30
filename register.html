@@ -1,82 +1,163 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#c0392b">
-<title>नोंदणी — मी आज पासून दारू सोडली</title>
-<link rel="manifest" href="./manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#fff;--fg:#1d1830;--mut:#6b6485;--card:#fff;--line:#ded8ee;--acc:#c0392b;--gold:#e8b64c}
-@media(prefers-color-scheme:dark){:root{--bg:#15131f;--fg:#f5f1ff;--mut:#a9a3c2;--card:#201d31;--line:#2f2b46;--acc:#e8590c;--gold:#ffb84d}}
-*{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--fg);font-family:'Noto Sans Devanagari','Nirmala UI',system-ui,sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;min-height:100vh}
-main{width:100%;max-width:420px;display:flex;flex-direction:column;gap:16px;justify-content:center}
-h1{font-size:1.5rem;font-weight:800;text-align:center;color:var(--acc);line-height:1.4}
-p.sub{text-align:center;color:var(--mut);font-size:.95rem;line-height:1.7;margin-bottom:6px}
-label{display:block;font-weight:800;font-size:.95rem;margin-bottom:6px}
-input{font:inherit;font-size:1.05rem;padding:14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--fg);width:100%}
-input:focus{outline:0;border-color:var(--acc)}
-.btn{font:inherit;font-weight:800;font-size:1.15rem;padding:18px;border-radius:16px;border:0;cursor:pointer;text-align:center;text-decoration:none;display:block;background:linear-gradient(135deg,#c0392b,#e8590c);color:#fff;box-shadow:0 10px 24px rgba(192,57,43,.35);margin-top:6px}
-.err{color:#c0392b;font-size:.9rem;text-align:center;display:none}
-footer{margin-top:20px;text-align:center;font-size:.8rem;color:var(--mut);line-height:1.9}
-footer a{color:var(--acc);text-decoration:none;font-weight:600;margin:0 4px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>तुमची ओळख सांगा</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#b91c1c">
+
+  <script>
+    // १. जर नाव आधीच भरलेले असेल तर पुन्हा हे पेज न दाखवता थेट मेन ॲपवर पाठवा
+    if (localStorage.getItem('userName')) {
+      window.location.replace('./app.html');
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: #ffffff;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 20px 16px;
+    }
+    .form-container {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 60px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #b91c1c;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .subtext {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 36px;
+    }
+    .input-group {
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      color: #0f172a;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: #ea580c;
+    }
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(180deg, #ea580c 0%, #c2410c 100%);
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3);
+      margin-top: 12px;
+    }
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+    footer {
+      font-size: 0.85rem;
+      color: #64748b;
+      padding-top: 16px;
+      text-align: center;
+      width: 100%;
+    }
+    footer a {
+      color: #b91c1c;
+      text-decoration: none;
+      margin: 0 4px;
+    }
+  </style>
 </head>
 <body>
-<main>
-  <h1>तुमची ओळख सांगा</h1>
-  <p class="sub">हे फक्त तुमच्या मोबाईलमध्ये साठवलं जातं.<br>कोणालाही दिसत नाही.</p>
 
-  <div>
-    <label for="name">तुमचं नाव</label>
-    <input id="name" type="text" autocomplete="name" placeholder="उदा: राज" maxlength="40">
+  <div class="form-container">
+    <h1>तुमची ओळख सांगा</h1>
+    <p class="subtext">
+      हे फक्त तुमच्या मोबाईलमध्ये साठवलं जातं.<br>कोणालाही दिसत नाही.
+    </p>
+
+    <form id="profileForm" onsubmit="saveProfile(event)">
+      <div class="input-group">
+        <label for="userName">तुमचं नाव</label>
+        <input type="text" id="userName" placeholder="तुमचं नाव टाका" required>
+      </div>
+
+      <div class="input-group">
+        <label for="userAge">वय</label>
+        <input type="number" id="userAge" placeholder="वय टाका" min="1" max="120" required>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        मी आज पासून बंद केली
+      </button>
+    </form>
   </div>
-
-  <div>
-    <label for="age">वय</label>
-    <input id="age" type="number" inputmode="numeric" min="10" max="110" placeholder="उदा: 35">
-  </div>
-
-  <p class="err" id="err">कृपया नाव आणि वय भरा.</p>
-
-  <button class="btn" id="go" type="button">मी आज पासून बंद केली</button>
 
   <footer>
-    <a href="https://punepoona.in">punepoona.in</a>·
-    <a href="https://claimtak.in">claimtak.in</a>·
-    <a href="https://navinpune.com">navinpune.com</a>
+    <p>
+      <a href="https://www.punepoona.in" target="_blank">punepoona.in</a> • 
+      <a href="https://www.claimtak.in" target="_blank">claimtak.in</a> • 
+      <a href="https://www.navinpune.com" target="_blank">navinpune.com</a>
+    </p>
   </footer>
-</main>
 
-<script>
-(function(){
-'use strict';
-var $ = function(i){ return document.getElementById(i); };
+  <script>
+    // फॉर्म सबमिट झाल्यावर डेटा कायमस्वरूपी सेव्ह करणे
+    function saveProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById('userName').value.trim();
+      const age = document.getElementById('userAge').value.trim();
 
-// आधीच भरलं असेल तर prefill
-try {
-  $('name').value = localStorage.getItem('sd_name') || '';
-  $('age').value  = localStorage.getItem('sd_age')  || '';
-} catch(e){}
+      if (name && age) {
+        // LocalStorage मध्ये माहिती सुरक्षित ठेवणे
+        localStorage.setItem('userName', name);
+        localStorage.setItem('userAge', age);
 
-$('go').addEventListener('click', function(){
-  var n = $('name').value.trim();
-  var a = parseInt($('age').value, 10);
-  if(!n || !a || a < 10 || a > 110){
-    $('err').style.display = 'block';
-    return;
-  }
-  try {
-    localStorage.setItem('sd_name', n);
-    localStorage.setItem('sd_age', String(a));
-    localStorage.setItem('sd_start_v1', new Date().toISOString());
-    localStorage.setItem('sd_high_v1', '0');
-  } catch(e){}
-  location.href = './app.html';
-});
-})();
-</script>
+        // तारीख आधीपासून नसेल तर आजची तारीख सेट करणे
+        if (!localStorage.getItem('quitStartDate')) {
+          localStorage.setItem('quitStartDate', new Date().toISOString());
+        }
+
+        // थेट ट्रॅकर पेजवर पाठवणे
+        window.location.replace('./app.html');
+      }
+    }
+  </script>
 </body>
 </html>
