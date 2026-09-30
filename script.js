@@ -201,4 +201,275 @@
         { c1: '#f1c40f', c2: '#f39c12', glow: 'rgba(241,196,15,0.55)'  }, // पिवळा
         { c1: '#2ecc71', c2: '#27ae60', glow: 'rgba(46,204,113,0.55)'  }, // हिरवा
         { c1: '#1abc9c', c2: '#16a085', glow: 'rgba(26,188,156,0.55)'  }, // हिरवट-निळा
-        { c1: '#3498db', c2: '#2980b9', glow: 'rgba(
+        { c1: '#3498db', c2: '#2980b9', glow: 'rgba(52,152,219,0.55)'  }, // निळा
+        { c1: '#9b59b6', c2: '#8e44ad', glow: 'rgba(155,89,182,0.55)'  }, // जांभळा
+        { c1: '#e91e63', c2: '#c2185b', glow: 'rgba(233,30,99,0.55)'   }  // गुलाबी
+    ];
+
+    // ---------- Milestones ----------
+    var milestones = [7, 30, 90, 180, 365, 730, 1095];
+
+    // ---------- DOM ----------
+    var appTitleEl   = document.getElementById('appTitle');
+    var daysCountEl  = document.getElementById('daysCount');
+    var daysLabelEl  = document.getElementById('daysLabel');
+    var motivationEl = document.getElementById('motivationText');
+    var confidenceEl = document.getElementById('confidenceBadge');
+    var counterBox   = document.getElementById('counterBox');
+    var langButtons  = document.querySelectorAll('.lang-btn');
+    var installBtn   = document.getElementById('installBtn');
+    var installBtnText = document.getElementById('installBtnText');
+    var iosHint      = document.getElementById('iosHint');
+    var installedMsg = document.getElementById('installedMsg');
+    var magicEmojiEl = document.getElementById('magicEmoji');
+    var dailyMagicEl = document.getElementById('dailyMagic');
+    var milestoneEl  = document.getElementById('milestoneBadge');
+    var rainbowParticlesEl = document.getElementById('rainbowParticles');
+    var fireworksEl  = document.getElementById('fireworks');
+    var sparklesEl   = document.getElementById('sparkles');
+    var confettiCanvas = document.getElementById('confettiCanvas');
+
+    // ---------- State ----------
+    var currentLang = 'mr';
+    var currentDays = -1;
+    var tickTimerId = null;
+    var deferredPrompt = null;
+    var rainbowTick = null;
+
+    // ---------- Helpers ----------
+    function getTodayStart() {
+        var now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    }
+
+    function getStartDate() {
+        var raw = localStorage.getItem(STORAGE_KEY_START);
+        if (raw) {
+            var d = new Date(raw);
+            if (!isNaN(d.getTime())) return d;
+        }
+        var start = getTodayStart();
+        localStorage.setItem(STORAGE_KEY_START, start.toISOString());
+        return start;
+    }
+
+    function calculateDays() {
+        var start = getStartDate();
+        var today = getTodayStart();
+        var diffMs = today.getTime() - start.getTime();
+        var diffDays = Math.floor(diffMs / 86400000);
+        return Math.max(1, diffDays + 1);
+    }
+
+    // ---------- Rainbow color for a given day ----------
+    function getRainbowForDay(days) {
+        var idx = (days - 1) % rainbowPalette.length;
+        return rainbowPalette[idx];
+    }
+
+    // ---------- Daily magic (रोज बदलणारा संदेश + emoji) ----------
+    function getDailyEmoji(days) {
+        var emojis = ['🌱','🌿','🍀','🌳','🌸','🌻','🌞','⭐','✨','🌟','💎','👑','🏆','🎯','🔥','⚡','💪','❤️','🎁','🌈','🦋','🌺','🍁','🌊','🗻','🦁','🐯','🚀','🎨','🎵'];
+        return emojis[(days - 1) % emojis.length];
+    }
+
+    function getDailyMagicIndex(days) {
+        return (days - 1) % 30;
+    }
+
+    // ---------- Milestone detection ----------
+    function getMilestone(days) {
+        for (var i = 0; i < milestones.length; i++) {
+            if (days === milestones[i]) return milestones[i];
+        }
+        return null;
+    }
+
+    // ---------- Confetti (Canvas) ----------
+    var confettiParticles = [];
+    var confettiRunning = false;
+
+    function resizeCanvas() {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function spawnConfetti(count, options) {
+        options = options || {};
+        var colors = options.colors || ['#f39c12','#e74c3c','#3498db','#2ecc71','#9b59b6','#f1c40f','#e91e63','#1abc9c'];
+        for (var i = 0; i < count; i++) {
+            confettiParticles.push({
+                x: Math.random() * confettiCanvas.width,
+                y: -20 - Math.random() * 100,
+                vx: (Math.random() - 0.5) * 3,
+                vy: 2 + Math.random() * 3,
+                size: 6 + Math.random() * 8,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.2,
+                shape: Math.random() < 0.5 ? 'rect' : 'circle',
+                life: 1
+            });
+        }
+        if (!confettiRunning) {
+            confettiRunning = true;
+            requestAnimationFrame(confettiLoop);
+        }
+    }
+
+    function confettiLoop() {
+        var ctx = confettiCanvas.getContext('2d');
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+        for (var i = confettiParticles.length - 1; i >= 0; i--) {
+            var p = confettiParticles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.06; // gravity
+            p.rotation += p.rotSpeed;
+            p.life -= 0.004;
+
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.life);
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.fillStyle = p.color;
+
+            if (p.shape === 'rect') {
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            } else {
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+
+            if (p.y > confettiCanvas.height + 30 || p.life <= 0) {
+                confettiParticles.splice(i, 1);
+            }
+        }
+
+        if (confettiParticles.length > 0) {
+            requestAnimationFrame(confettiLoop);
+        } else {
+            confettiRunning = false;
+        }
+    }
+
+    // ---------- Fireworks bursts inside counter box ----------
+    function triggerFireworks(colors, count) {
+        count = count || 2;
+        colors = colors || ['#f39c12','#e74c3c','#3498db','#2ecc71','#9b59b6','#f1c40f'];
+
+        for (var c = 0; c < count; c++) {
+            var originX = 20 + Math.random() * 60; // % position
+            var originY = 20 + Math.random() * 50;
+
+            var sparkCount = 16 + Math.floor(Math.random() * 8);
+            for (var i = 0; i < sparkCount; i++) {
+                var angle = (Math.PI * 2 * i) / sparkCount;
+                var distance = 60 + Math.random() * 80;
+                var spark = document.createElement('span');
+                spark.className = 'firework-spark';
+                spark.style.left = originX + '%';
+                spark.style.top  = originY + '%';
+                spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+                spark.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                spark.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                spark.style.animationDelay = (c * 0.15) + 's';
+
+                fireworksEl.appendChild(spark);
+
+                (function (s) {
+                    setTimeout(function () {
+                        if (s.parentNode) s.parentNode.removeChild(s);
+                    }, 2000);
+                })(spark);
+            }
+        }
+    }
+
+    // ---------- Sparkles ----------
+    function refreshSparkles(days) {
+        sparklesEl.innerHTML = '';
+        var count = Math.min(8, 3 + Math.floor(days / 10));
+        var icons = ['✨','⭐','🌟','💫'];
+        for (var i = 0; i < count; i++) {
+            var sp = document.createElement('span');
+            sp.className = 'sparkle';
+            sp.textContent = icons[Math.floor(Math.random() * icons.length)];
+            sp.style.left = (5 + Math.random() * 90) + '%';
+            sp.style.top = (5 + Math.random() * 85) + '%';
+            sp.style.animationDelay = (Math.random() * 2.5) + 's';
+            sparklesEl.appendChild(sp);
+        }
+    }
+
+    // ---------- Rainbow Particles ----------
+    function refreshRainbowParticles(days) {
+        rainbowParticlesEl.innerHTML = '';
+        var count = 10 + Math.min(20, days); // दिवस वाढताच जास्त particles
+        for (var i = 0; i < count; i++) {
+            var p = document.createElement('span');
+            p.className = 'particle';
+            var color = rainbowPalette[(days + i) % rainbowPalette.length].c1;
+            p.style.background = color;
+            p.style.left = Math.random() * 100 + '%';
+            p.style.bottom = '-10px';
+            var size = 4 + Math.random() * 6;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.animationDelay = (Math.random() * 6) + 's';
+            p.style.animationDuration = (4 + Math.random() * 4) + 's';
+            rainbowParticlesEl.appendChild(p);
+        }
+    }
+
+    // ---------- Main Render ----------
+    function setLanguage(lang) {
+        if (!translations[lang]) lang = 'mr';
+        currentLang = lang;
+        localStorage.setItem(STORAGE_KEY_LANG, lang);
+        document.documentElement.lang = lang;
+
+        langButtons.forEach(function (btn) {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+
+        var t = translations[lang];
+        appTitleEl.textContent  = t.title;
+        daysLabelEl.textContent = t.daysLabel;
+        if (installBtnText) installBtnText.textContent = t.installBtn;
+        if (installedMsg)   installedMsg.textContent   = t.installedMsg;
+        if (iosHint)        iosHint.textContent        = t.iosHint;
+
+        applyEverything(currentDays, true);
+    }
+
+    function applyEverything(days, force) {
+        var t = translations[currentLang];
+        if (!t) return;
+        var safeDays = Math.max(1, days);
+
+        // Colors — rainbow दिवसानुसार
+        var rainbow = getRainbowForDay(safeDays);
+        counterBox.style.background = 'linear-gradient(135deg, ' + rainbow.c1 + ', ' + rainbow.c2 + ')';
+        counterBox.style.boxShadow  = '0 15px 45px ' + rainbow.glow;
+
+        // Confidence badge
+        var confIdx = Math.min(t.confidences.length - 1, Math.floor(safeDays / 30));
+        confidenceEl.textContent = t.confidences[confIdx];
+        confidenceEl.style.borderColor = rainbow.c1;
+        confidenceEl.style.color       = rainbow.c1;
+
+        // Motivation
+        motivationEl.textContent = t.motivations[safeDays % t.motivations.length];
+
+        // Daily magic — रोज बदलणारा
+        var magicIdx = getDailyMagicIndex(safeDays);
+        dailyMagicEl.textContent = t.dailyMagic[magicIdx] || t.dailyMagic[0];
+
+        // Daily emoji
+        magicEmojiEl.te
