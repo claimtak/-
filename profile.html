@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c0392b">
+<title>प्रोफाइल — माझा प्रवास</title>
+<link rel="manifest" href="./manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--fg:#1d1830;--mut:#6b6485;--card:#fff;--line:#ded8ee;--acc:#c0392b;--gold:#e8b64c}
+@media(prefers-color-scheme:dark){:root{--bg:#15131f;--fg:#f5f1ff;--mut:#a9a3c2;--card:#201d31;--line:#2f2b46;--acc:#e8590c;--gold:#ffb84d}}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:'Noto Sans Devanagari','Nirmala UI',system-ui,sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center}
+main{width:100%;max-width:420px;display:flex;flex-direction:column;gap:16px}
+h1{font-size:1.4rem;font-weight:800;text-align:center;color:var(--acc);margin-bottom:4px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center}
+.stat .n{font-size:1.8rem;font-weight:800;color:var(--gold)}
+.stat .l{font-size:.85rem;color:var(--mut);margin-top:4px}
+label{display:block;font-weight:800;font-size:.95rem;margin-bottom:6px}
+input{font:inherit;font-size:1.05rem;padding:14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--fg);width:100%}
+input:focus{outline:0;border-color:var(--acc)}
+.btn{font:inherit;font-weight:800;font-size:1.05rem;padding:16px;border-radius:16px;border:0;cursor:pointer;text-align:center;text-decoration:none;display:block;width:100%}
+.save{background:linear-gradient(135deg,#c0392b,#e8590c);color:#fff}
+.back{background:transparent;color:var(--mut);border:1px solid var(--line);font-weight:500}
+.danger{background:transparent;color:#c0392b;border:1px solid #c0392b;font-weight:600}
+.err{color:#c0392b;font-size:.9rem;text-align:center;display:none}
+footer{margin-top:20px;text-align:center;font-size:.8rem;color:var(--mut);line-height:1.9}
+footer a{color:var(--acc);text-decoration:none;font-weight:600;margin:0 4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:12px;font-size:.9rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:11}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<main>
+  <h1>प्रोफाइल</h1>
+
+  <div class="stat">
+    <div class="n" id="dNow">—</div>
+    <div class="l">आजचे दिवस</div>
+  </div>
+  <div class="stat">
+    <div class="n" id="dHigh">—</div>
+    <div class="l">सर्वोच्च record</div>
+  </div>
+
+  <div>
+    <label for="name">नाव</label>
+    <input id="name" type="text" maxlength="40" autocomplete="name">
+  </div>
+  <div>
+    <label for="age">वय</label>
+    <input id="age" type="number" min="10" max="110" inputmode="numeric">
+  </div>
+
+  <p class="err" id="err">कृपया नाव आणि वय बरोबर भरा.</p>
+
+  <button class="btn save" id="save" type="button">जतन करा</button>
+  <a class="btn back" href="./app.html">मागे जा</a>
+  <button class="btn danger" id="wipe" type="button">सगळा डेटा हटवा</button>
+
+  <footer>
+    <a href="https://punepoona.in">punepoona.in</a>·
+    <a href="https://claimtak.in">claimtak.in</a>·
+    <a href="https://navinpune.com">navinpune.com</a>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var $ = function(i){ return document.getElementById(i); };
+function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+function today(){ var n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
+function calc(){
+  var r=get('sd_start_v1'), d=r?new Date(r):null;
+  if(!d||isNaN(d)) return 0;
+  return Math.max(1, Math.round((today()-d)/864e5)+1);
+}
+function fmt(n){ try{ return n.toLocaleString('en-IN'); }catch(e){ return String(n); } }
+function toast(m){ var e=$('toast'); e.textContent=m; e.classList.add('show'); setTimeout(function(){ e.classList.remove('show'); },2200); }
+
+$('name').value = get('sd_name') || '';
+$('age').value  = get('sd_age')  || '';
+$('dNow').textContent  = fmt(calc());
+$('dHigh').textContent = fmt(parseInt(get('sd_high_v1')||'0',10) || 0);
+
+$('save').addEventListener('click', function(){
+  var n=$('name').value.trim(), a=parseInt($('age').value,10);
+  if(!n || !a || a<10 || a>110){ $('err').style.display='block'; return; }
+  $('err').style.display='none';
+  set('sd_name', n); set('sd_age', String(a));
+  toast('जतन झालं ✓');
+});
+
+$('wipe').addEventListener('click', function(){
+  if(!confirm('सगळा डेटा हटवायचा? हे पुन्हा मिळणार नाही.')) return;
+  ['sd_start_v1','sd_high_v1','sd_name','sd_age','sd_lang_v1'].forEach(del);
+  location.replace('./index.html');
+});
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
+})();
+</script>
+</body>
+</html>
