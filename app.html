@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>मी आज पासून दारू सोडली - ट्रॅकर</title>
+  <title>Mi Aaj Pasun Daaru Sodli</title>
 
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#b91c1c">
@@ -154,12 +154,6 @@
       color: #475569;
       border: 1px solid #cbd5e1;
     }
-    .btn-install {
-      background-color: #16a34a;
-      color: #ffffff;
-      display: none; /* आधी लपवून ठेवले जाईल */
-      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
-    }
     footer {
       margin-top: 24px;
       padding: 16px 0;
@@ -186,26 +180,28 @@
           STOP!<br>ड्रिंक<br>KING
         </div>
         <div class="user-details">
-          <h2 id="userNameDisplay">Hello, Navin Parakh</h2>
-          <p id="userAgeDisplay">Age: 54</p>
+          <h2 id="userNameDisplay">Namaskar</h2>
+          <p id="userAgeDisplay">Vay: --</p>
         </div>
       </div>
     </div>
 
+    <!-- Bhasha Buttons -->
     <div class="lang-switcher">
-      <button class="lang-btn" onclick="setLanguage('mr')">मराठी</button>
-      <button class="lang-btn" onclick="setLanguage('hi')">हिंदी</button>
-      <button class="lang-btn active" onclick="setLanguage('en')">English</button>
+      <button class="lang-btn" id="btn-mr" onclick="setLanguage('mr')">मराठी</button>
+      <button class="lang-btn" id="btn-hi" onclick="setLanguage('hi')">हिंदी</button>
+      <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">English</button>
     </div>
 
+    <!-- Tracker Card -->
     <div class="tracker-card">
-      <h3 class="card-title" id="cardTitle">I Quit Alcohol From Today</h3>
+      <h3 class="card-title" id="cardTitle">मी आज पासून दारू सोडली</h3>
       
       <div class="counter-number" id="daysCount">1</div>
-      <div class="counter-label" id="daysLabel">Days</div>
+      <div class="counter-label" id="daysLabel">दिवस</div>
       
       <p class="motivational-quote" id="quoteText">
-        Today is yours. Win one day at a time.
+        आजचा दिवस तुमचा आहे. एका वेळी एक दिवस जिंका.
       </p>
 
       <div class="card-footer-branding">
@@ -214,16 +210,11 @@
     </div>
 
     <button class="btn-action btn-share" id="shareBtn" onclick="shareProgress()">
-      Share today's win
+      आजचा विजय शेअर करा
     </button>
 
     <button class="btn-action btn-slip" id="slipBtn" onclick="handleSlip()">
-      I slipped today
-    </button>
-
-    <!-- इन्स्टॉल नसेल तरच हे दिसेल -->
-    <button class="btn-action btn-install" id="installAppBtn">
-      📲 ॲप इन्स्टॉल करा (Install App)
+      आज मी घसरलो
     </button>
 
     <footer>
@@ -235,6 +226,46 @@
   </div>
 
   <script>
+    // 1. Bhashanche Shabdkosh (Translations)
+    const translations = {
+      mr: {
+        hello: "नमस्कार",
+        age: "वय",
+        cardTitle: "मी आज पासून दारू सोडली",
+        daysLabel: "दिवस",
+        quote: "आजचा दिवस तुमचा आहे. एका वेळी एक दिवस जिंका.",
+        shareBtn: "आजचा विजय शेअर करा",
+        slipBtn: "आज मी घसरलो",
+        slipConfirm: "नवीन सुरुवात करायची आहे का? तुमचा काऊंटर पुन्हा १ वरून सुरू होईल.",
+        shareText: "मी दारू सोडण्याचा संकल्प केला असून आज माझे {days} दिवस यशस्वीरीत्या पूर्ण झाले आहेत! 🎯"
+      },
+      hi: {
+        hello: "नमस्ते",
+        age: "उम्र",
+        cardTitle: "मैंने आज से शराब छोड़ दी",
+        daysLabel: "दिन",
+        quote: "आज का दिन आपका है। हर दिन एक नई जीत हासिल करें।",
+        shareBtn: "आज की जीत शेयर करें",
+        slipBtn: "आज मुझसे चूक हुई",
+        slipConfirm: "क्या आप फिर से शुरुआत करना चाहते हैं? आपका काउंटर 1 से शुरू होगा।",
+        shareText: "मैंने शराब छोड़ने का संकल्प लिया है और आज मेरे {days} दिन पूरे हो गए हैं! 🎯"
+      },
+      en: {
+        hello: "Hello",
+        age: "Age",
+        cardTitle: "I Quit Alcohol From Today",
+        daysLabel: "Days",
+        quote: "Today is yours. Win one day at a time.",
+        shareBtn: "Share today's win",
+        slipBtn: "I slipped today",
+        slipConfirm: "Do you want to reset? Your counter will restart from day 1.",
+        shareText: "I resolved to quit alcohol, and today I completed {days} days! 🎯"
+      }
+    };
+
+    let currentLang = localStorage.getItem('appLang') || 'mr';
+
+    // 2. User Data Load
     const storedName = localStorage.getItem('userName') || 'Navin Parakh';
     const storedAge = localStorage.getItem('userAge') || '54';
     let startDate = localStorage.getItem('quitStartDate');
@@ -244,32 +275,55 @@
       localStorage.setItem('quitStartDate', startDate);
     }
 
-    document.getElementById('userNameDisplay').textContent = `Hello, ${storedName}`;
-    document.getElementById('userAgeDisplay').textContent = `Age: ${storedAge}`;
-
+    // 3. Days Count Function
     function calculateDays() {
       const start = new Date(startDate);
       const today = new Date();
       const diffTime = Math.abs(today - start);
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
       document.getElementById('daysCount').textContent = diffDays;
+      return diffDays;
     }
-    calculateDays();
 
+    // 4. Bhasha Badal Function (Main Logic)
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('appLang', lang);
+
+      // Buttons active/inactive class
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btn-' + lang);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const t = translations[lang];
+      document.getElementById('userNameDisplay').textContent = `${t.hello}, ${storedName}`;
+      document.getElementById('userAgeDisplay').textContent = `${t.age}: ${storedAge}`;
+      document.getElementById('cardTitle').textContent = t.cardTitle;
+      document.getElementById('daysLabel').textContent = t.daysLabel;
+      document.getElementById('quoteText').textContent = t.quote;
+      document.getElementById('shareBtn').textContent = t.shareBtn;
+      document.getElementById('slipBtn').textContent = t.slipBtn;
+    }
+
+    // 5. Slip Function
     function handleSlip() {
-      if (confirm('नवीन सुरुवात करायची आहे का? तुमचा काऊंटर पुन्हा १ वरून सुरू होईल.')) {
+      const t = translations[currentLang];
+      if (confirm(t.slipConfirm)) {
         startDate = new Date().toISOString();
         localStorage.setItem('quitStartDate', startDate);
         calculateDays();
       }
     }
 
+    // 6. Share Function
     function shareProgress() {
-      const days = document.getElementById('daysCount').textContent;
-      const text = `मी दारू सोडण्याचा संकल्प केला असून आज माझे ${days} दिवस यशस्वीरीत्या पूर्ण झाले आहेत! 🎯`;
+      const days = calculateDays();
+      const t = translations[currentLang];
+      const text = t.shareText.replace('{days}', days);
+
       if (navigator.share) {
         navigator.share({
-          title: 'मी आज पासून दारू सोडली',
+          title: t.cardTitle,
           text: text,
           url: window.location.href
         }).catch(() => {});
@@ -278,43 +332,9 @@
       }
     }
 
-    // इन्स्टॉल स्थिती तपासणी
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    const isAlreadyInstalled = localStorage.getItem('pwaInstalled') === 'true';
-    const installBtn = document.getElementById('installAppBtn');
-    let deferredPrompt = null;
-
-    if (!isStandalone && !isAlreadyInstalled) {
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) installBtn.style.display = 'block';
-      });
-    } else {
-      // ॲप आधीच इन्स्टॉल असल्यास हे बटन कायमचे लपवा
-      if (installBtn) installBtn.style.display = 'none';
-    }
-
-    if (installBtn) {
-      installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          if (outcome === 'accepted') {
-            localStorage.setItem('pwaInstalled', 'true');
-            installBtn.style.display = 'none';
-          }
-          deferredPrompt = null;
-        } else {
-          alert('ॲप इन्स्टॉल करण्यासाठी वर उजव्या कोपऱ्यातील ३ डॉट्सवर (⋮) क्लिक करून Install निवडा.');
-        }
-      });
-    }
-
-    window.addEventListener('appinstalled', () => {
-      localStorage.setItem('pwaInstalled', 'true');
-      if (installBtn) installBtn.style.display = 'none';
-    });
+    // Page suru zalyavar
+    calculateDays();
+    setLanguage(currentLang);
   </script>
 </body>
 </html>
