@@ -1,117 +1,182 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#c0392b">
-<meta name="description" content="मी आज पासून दारू सोडली — दिवस मोजा आणि यश शेअर करा.">
-<title>मी आज पासून दारू सोडली</title>
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./cover.png" type="image/png">
-<link rel="apple-touch-icon" href="./cover.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="दारू सोडली">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#fff;--fg:#1d1830;--mut:#6b6485;--card:#fff;--line:#ded8ee;--acc:#c0392b;--gold:#e8b64c}
-@media(prefers-color-scheme:dark){:root{--bg:#15131f;--fg:#f5f1ff;--mut:#a9a3c2;--card:#201d31;--line:#2f2b46;--acc:#e8590c;--gold:#ffb84d}}
-*{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--fg);font-family:'Noto Sans Devanagari','Nirmala UI',system-ui,sans-serif;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;min-height:100vh}
-main{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center;gap:18px}
-.cover{width:min(280px,75vw);height:auto;filter:drop-shadow(0 12px 30px rgba(192,57,43,.35))}
-h1{font-size:1.6rem;font-weight:800;text-align:center;line-height:1.35;color:var(--acc)}
-.sub{font-size:.95rem;color:var(--mut);text-align:center;line-height:1.7}
-.counter{background:var(--card);border:2px solid var(--gold);border-radius:18px;padding:20px 18px;text-align:center;width:100%}
-.counter .n{font-size:2.2rem;font-weight:800;color:var(--gold);letter-spacing:.5px}
-.counter .l{font-size:.9rem;color:var(--mut);margin-top:6px}
-.btn{font:inherit;font-weight:800;font-size:1.1rem;padding:16px;border-radius:16px;border:0;cursor:pointer;text-align:center;text-decoration:none;display:block;width:100%}
-.dl{background:linear-gradient(135deg,#c0392b,#e8590c);color:#fff;box-shadow:0 10px 24px rgba(192,57,43,.35)}
-.dl:active{transform:translateY(1px)}
-.again{background:transparent;color:var(--mut);border:1px solid var(--line);font-weight:500;font-size:.95rem;padding:12px}
-footer{margin-top:10px;text-align:center;font-size:.8rem;color:var(--mut);line-height:1.9}
-footer a{color:var(--acc);text-decoration:none;font-weight:600;margin:0 4px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>मी आज पासून दारू सोडली</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#b91c1c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="दारू सोडली">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      text-align: center;
+      padding: 16px;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .cover-img {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 16px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 1.7rem;
+      color: #b91c1c;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+    .counter-box {
+      background-color: #fee2e2;
+      color: #991b1b;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      display: inline-block;
+    }
+    
+    /* थेट होम पेजवर दिसणारे इन्स्टॉल बटन */
+    .btn-install {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 16px 28px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+      display: block; /* हे बटन स्क्रीनवर कायम दिसेल */
+      margin-bottom: 14px;
+      transition: transform 0.1s, background-color 0.2s;
+    }
+    .btn-install:active {
+      transform: scale(0.98);
+      background-color: #b91c1c;
+    }
+    .btn-start {
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      display: inline-block;
+      width: 100%;
+      max-width: 320px;
+      font-size: 1rem;
+    }
+    footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    footer a {
+      color: #2563eb;
+      text-decoration: none;
+      margin: 0 6px;
+    }
+  </style>
 </head>
 <body>
-<main>
-  <img class="cover" src="./cover.png" alt="STOP! दि किंग">
-  <h1>मी आज पासून दारू सोडली</h1>
-  <p class="sub">तुमचा प्रवास आजपासून सुरू होतो.<br>एक दिवस, एक पाऊल — तुम्ही करू शकता.</p>
 
-  <div class="counter">
-    <div class="n" id="dlCount">— — —</div>
-    <div class="l" id="dlLabel">लोकांनी हे ॲप वापरलं आहे</div>
+  <div class="container">
+    <img src="./cover.png" alt="STOP DRINK" class="cover-img" onerror="this.style.display='none'">
+    
+    <h1>मी आज पासून दारू सोडली</h1>
+    
+    <div class="counter-box">
+      ५,२३,८४७+ लोकांनी संकल्प केला
+    </div>
+
+    <!-- होम पेजवरील मुख्य Install Button -->
+    <button id="installBtn" class="btn-install">
+      📲 ॲप इन्स्टॉल करा
+    </button>
+
+    <!-- थेट वेबवर वापरण्यासाठी पर्याय -->
+    <a href="./register.html" class="btn-start">वेबवर पुढे जा &rarr;</a>
   </div>
 
-  <a class="btn dl" id="startBtn" href="./register.html">आता सुरू करा</a>
-  <a class="btn again" id="continueBtn" href="./app.html" style="display:none">आधीच सुरू केलंय — पुढे जा</a>
-
   <footer>
-    <a href="https://punepoona.in">punepoona.in</a>·
-    <a href="https://claimtak.in">claimtak.in</a>·
-    <a href="https://navinpune.com">navinpune.com</a>
+    <p>
+      <a href="https://www.punepoona.in" target="_blank">punepoona.in</a> • 
+      <a href="https://www.claimtak.in" target="_blank">claimtak.in</a> • 
+      <a href="https://www.navinpune.com" target="_blank">navinpune.com</a>
+    </p>
   </footer>
-</main>
 
-<script>
-(function(){
-'use strict';
-/* === Firebase placeholder ===
-   नंतर firebaseConfig टाका आणि खालचं fetch बदला.
-   आत्ता counter localStorage वर चालतो (per-device). */
-var FIREBASE_URL = ''; // उदा: 'https://your-project.firebaseio.com/downloads.json'
+  <script>
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
 
-function localCount(){
-  var v = parseInt(localStorage.getItem('sd_dl_count') || '0', 10);
-  return isNaN(v) ? 0 : v;
-}
-function bumpLocal(){
-  var v = localCount() + 1;
-  localStorage.setItem('sd_dl_count', String(v));
-  return v;
-}
-function fmt(n){
-  try { return n.toLocaleString('en-IN'); } catch(e){ return String(n); }
-}
-function showCount(n){
-  document.getElementById('dlCount').textContent = fmt(n);
-}
+    // १. Service Worker नोंदणी
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker Registered!', reg))
+          .catch((err) => console.error('SW Error:', err));
+      });
+    }
 
-/* जर user ने आधीच register केलं असेल तर "continue" दाखव */
-if(localStorage.getItem('sd_start_v1') && localStorage.getItem('sd_name')){
-  document.getElementById('startBtn').textContent = 'ॲप उघडा';
-  document.getElementById('startBtn').href = './app.html';
-  document.getElementById('continueBtn').style.display = 'none';
-}
+    // २. ब्राऊझरचा इन्स्टॉल इव्हेंट कॅप्चर करणे
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
 
-/* एकदाच increment per session */
-var key = 'sd_dl_counted';
-if(!sessionStorage.getItem(key)){
-  sessionStorage.setItem(key, '1');
-  if(FIREBASE_URL){
-    fetch(FIREBASE_URL).then(function(r){ return r.json(); })
-      .then(function(v){
-        var n = (v || 0) + 1;
-        fetch(FIREBASE_URL, { method:'PUT', body: String(n) });
-        showCount(n);
-      }).catch(function(){ showCount(bumpLocal()); });
-  } else {
-    showCount(bumpLocal());
-  }
-} else {
-  showCount(localCount() || 523847);
-}
+    // ३. बटणावर क्लिक झाल्यावर काय व्हावे
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // जर ब्राऊझरचा प्रॉम्प्ट तयार असेल तर थेट पॉपअप उघडा
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('User choice:', outcome);
+        deferredPrompt = null;
+      } else {
+        // जर प्रॉम्प्ट मिस झाला असेल, तर युझरला मेनूमधून इन्स्टॉल करण्याची सोपी सूचना द्या
+        alert('ॲप इन्स्टॉल करण्यासाठी:\nवर उजव्या बाजूला ३ डॉट्सवर (⋮) क्लिक करा आणि "Install and create shortcut" निवडा.');
+      }
+    });
 
-/* Register service worker (PWA install साठी आवश्यक) */
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./sw.js').catch(function(){});
-  });
-}
-})();
-</script>
+    // ४. इन्स्टॉल पूर्ण झाल्यावर
+    window.addEventListener('appinstalled', () => {
+      alert('ॲप यशस्वीरीत्या इन्स्टॉल झाले आहे!');
+      installBtn.style.display = 'none';
+    });
+  </script>
 </body>
 </html>
