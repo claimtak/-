@@ -224,3 +224,72 @@ footer {
     .counter-box { padding: 34px 16px; }
     .confidence-badge { font-size: 0.8rem; }
   }
+/* ---------- Install App Button ---------- */
+.install-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+
+.install-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 38px rgba(231, 76, 60, 0.5);
+}
+
+.install-btn:active {
+    transform: translateY(0);
+}
+
+/* ---------- iOS Hint ---------- */
+.ios-hint {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(52, 152, 219, 0.12);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    color: #3498db;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.ios-hint strong {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+/* ---------- Installed Message ---------- */
+.installed-msg {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.4);
+    color: #2ecc71;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    text-align: center;
+    font-weight: 600;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
