@@ -8,19 +8,19 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#15131f",
-  "theme_color": "#e8590c",
+  "theme_color": "#c0392b",
   "icons": [
     {
       "src": "cover.png",
-      "sizes": "192x192",
+      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "cover.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
