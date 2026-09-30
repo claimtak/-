@@ -2,8 +2,18 @@
 <html lang="mr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="description" content="मी आजपासून दारू सोडली - Sobriety Day Counter">
+    <meta name="theme-color" content="#1a1a2e">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="दारू सोडली">
+
     <title>मी आजपासून दारू सोडली</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -42,6 +52,21 @@
         <!-- Motivation Message -->
         <div class="motivation">
             <p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p>
+        </div>
+
+        <!-- Download App Button -->
+        <button id="installBtn" class="install-btn" type="button" style="display:none;">
+            📲 <span id="installBtnText">ॲप डाउनलोड करा</span>
+        </button>
+
+        <!-- Manual install hint (iOS साठी) -->
+        <div id="iosHint" class="ios-hint" style="display:none;">
+            📱 iPhone/iPad वापरताय? <strong>Share</strong> → <strong>"Add to Home Screen"</strong> निवडा.
+        </div>
+
+        <!-- Installed confirmation -->
+        <div id="installedMsg" class="installed-msg" style="display:none;">
+            ✅ ॲप इन्स्टॉल झालं! आता होम स्क्रीनवरच्या आयकॉनवर क्लिक करा.
         </div>
 
         <!-- Footer -->
