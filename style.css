@@ -300,7 +300,7 @@ body {
     100% { transform: scale(1); }
 }
 
-/* ---------- SLIPPED BUTTON (Counter खाली) ---------- */
+/* ---------- Slipped Button ---------- */
 .slipped-btn {
     display: flex;
     align-items: center;
@@ -343,6 +343,67 @@ body {
     color: rgba(255, 255, 255, 0.92);
     text-align: center;
     line-height: 1.5;
+}
+
+/* ---------- Download Image Button ---------- */
+.download-image-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 0.98rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(52, 152, 219, 0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.download-image-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 38px rgba(52, 152, 219, 0.55);
+}
+
+.download-image-btn:active {
+    transform: translateY(0);
+}
+
+.download-image-btn:disabled {
+    cursor: wait;
+}
+
+/* ---------- Toast Message ---------- */
+.toast-message {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    box-shadow: 0 12px 35px rgba(46, 204, 113, 0.5);
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: 10001;
+    max-width: 90%;
+    text-align: center;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.toast-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 /* ---------- Install Button ---------- */
@@ -594,4 +655,4 @@ footer {
     .modal-title { font-size: 1.5rem; }
     .modal-icon { font-size: 2.8rem; }
     .modal-card { padding: 24px 18px 20px; }
-}
+       }
