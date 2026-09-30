@@ -3,21 +3,31 @@
   "short_name": "दारू सोडली",
   "description": "दारू सोडण्याचा यश ट्रॅक करा आणि मोटिवेशन मिळवा",
   "lang": "mr",
-  "start_url": "./index.html",
-  "scope": "./",
+  "dir": "ltr",
+  "start_url": "/stopdrink/index.html",
+  "scope": "/stopdrink/",
+  "id": "/stopdrink/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#15131f",
   "theme_color": "#c0392b",
+  "categories": ["health", "lifestyle"],
   "icons": [
     {
-      "src": "cover.png",
+      "src": "/stopdrink/cover.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/stopdrink/cover.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "cover.png",
+      "src": "/stopdrink/cover.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
