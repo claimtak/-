@@ -3,809 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="description" content="मी आजपासून दारू सोडली - Sobriety Day Counter">
+<title>मी आजपासून दारू सोडली</title>
 <meta name="theme-color" content="#1a1a2e">
-
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="दारू सोडली">
-<meta name="mobile-web-app-capable" content="yes">
-
-<title>मी आजपासून दारू सोडली</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; }
-
-body {
-    font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    min-height: 100vh;
-    color: #fff;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    position: relative;
-}
-
-#confettiCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-}
-
-.container {
-    width: 100%;
-    max-width: 520px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 24px;
-    padding: 24px 22px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    position: relative;
-    z-index: 1;
-}
-
-.lang-switch {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 6px 0 6px;
-    flex-wrap: wrap;
-}
-
-.lang-btn {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.75);
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-.lang-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
-
-.lang-btn.active {
-    background: linear-gradient(135deg, #f39c12, #e74c3c);
-    color: #fff;
-    border-color: transparent;
-    box-shadow: 0 4px 14px rgba(231, 76, 60, 0.45);
-}
-
-.app-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    text-align: center;
-    margin-top: 20px;
-    line-height: 1.4;
-    background: linear-gradient(90deg, #ffffff, #f39c12);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.confidence-badge {
-    display: block;
-    text-align: center;
-    margin: 14px auto 4px;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 0.88rem;
-    font-weight: 600;
-    background: rgba(52, 152, 219, 0.15);
-    color: #3498db;
-    border: 1px solid rgba(52, 152, 219, 0.3);
-    width: fit-content;
-    max-width: 100%;
-    transition: all 0.6s ease;
-}
-
-.record-badge {
-    display: block;
-    text-align: center;
-    margin: 10px auto 0;
-    padding: 8px 16px;
-    border-radius: 14px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    background: rgba(241, 196, 15, 0.15);
-    color: #f1c40f;
-    border: 1px dashed rgba(241, 196, 15, 0.5);
-    width: fit-content;
-    max-width: 100%;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.counter-box {
-    margin: 22px 0 16px;
-    padding: 44px 20px 34px;
-    border-radius: 26px;
-    text-align: center;
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    box-shadow: 0 15px 45px rgba(52, 152, 219, 0.5);
-    transition: background 1.5s ease, box-shadow 1.5s ease;
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-}
-
-.counter-box::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.25), transparent 55%);
-    pointer-events: none;
-    z-index: 1;
-}
-
-.rainbow-particles {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.particle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.7;
-    animation: floatUp 6s linear infinite;
-    filter: blur(1px);
-}
-
-@keyframes floatUp {
-    0%   { transform: translateY(20px) scale(0.6); opacity: 0; }
-    20%  { opacity: 0.8; }
-    100% { transform: translateY(-120px) scale(1.1); opacity: 0; }
-}
-
-.fireworks {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.firework-spark {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    opacity: 0;
-    animation: sparkOut 1.6s ease-out forwards;
-}
-
-@keyframes sparkOut {
-    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-}
-
-.days-count {
-    font-size: 6rem;
-    font-weight: 800;
-    line-height: 1;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-    position: relative;
-    z-index: 3;
-    transition: transform 0.4s ease;
-}
-
-.days-count.bump { animation: bump 0.6s ease; }
-
-@keyframes bump {
-    0%   { transform: scale(1); }
-    40%  { transform: scale(1.18); }
-    70%  { transform: scale(0.95); }
-    100% { transform: scale(1); }
-}
-
-.days-label {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-top: 6px;
-    opacity: 0.95;
-    letter-spacing: 1px;
-    position: relative;
-    z-index: 3;
-}
-
-.sparkles {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.sparkle {
-    position: absolute;
-    font-size: 1.1rem;
-    opacity: 0;
-    animation: sparkleAnim 2.8s ease-in-out infinite;
-}
-
-@keyframes sparkleAnim {
-    0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
-    50%      { opacity: 1; transform: scale(1.2) rotate(180deg); }
-}
-
-.magic-emoji {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    font-size: 2rem;
-    z-index: 4;
-    animation: emojiBounce 2.5s ease-in-out infinite;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-@keyframes emojiBounce {
-    0%, 100% { transform: translateY(0) rotate(-8deg); }
-    50%      { transform: translateY(-8px) rotate(8deg); }
-}
-
-.daily-magic {
-    margin-top: 16px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(6px);
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #fff;
-    position: relative;
-    z-index: 3;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.25);
-    line-height: 1.4;
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.milestone-badge {
-    margin-top: 12px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.25);
-    color: #fff;
-    font-size: 0.95rem;
-    font-weight: 800;
-    display: inline-block;
-    position: relative;
-    z-index: 3;
-    border: 2px solid rgba(255,255,255,0.5);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    animation: badgePop 0.8s ease;
-}
-
-@keyframes badgePop {
-    0%   { transform: scale(0); opacity: 0; }
-    60%  { transform: scale(1.15); opacity: 1; }
-    100% { transform: scale(1); }
-}
-
-.slipped-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 12px 20px;
-    margin-bottom: 18px;
-    background: rgba(231, 76, 60, 0.12);
-    border: 1px solid rgba(231, 76, 60, 0.4);
-    color: #e74c3c;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 0.92rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-.slipped-btn:hover {
-    background: rgba(231, 76, 60, 0.2);
-    transform: translateY(-1px);
-}
-
-.motivation {
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 4px solid #f39c12;
-    padding: 16px 18px;
-    border-radius: 12px;
-}
-
-.quote {
-    font-style: italic;
-    font-size: 0.98rem;
-    color: rgba(255, 255, 255, 0.92);
-    text-align: center;
-    line-height: 1.5;
-}
-
-.download-image-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    margin-top: 18px;
-    padding: 14px 20px;
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 0.98rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(52, 152, 219, 0.45);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.download-image-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 38px rgba(52, 152, 219, 0.55);
-}
-
-.download-image-btn:disabled {
-    cursor: wait;
-    opacity: 0.7;
-}
-
-.toast-message {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-    color: #fff;
-    padding: 14px 22px;
-    border-radius: 14px;
-    font-size: 0.92rem;
-    font-weight: 700;
-    box-shadow: 0 12px 35px rgba(46, 204, 113, 0.5);
-    opacity: 0;
-    transition: all 0.4s ease;
-    z-index: 10001;
-    max-width: 90%;
-    text-align: center;
-    line-height: 1.4;
-    pointer-events: none;
-}
-
-.toast-message.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-.install-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    margin-top: 20px;
-    padding: 15px 20px;
-    background: linear-gradient(135deg, #f39c12, #e74c3c);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 1.02rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(231, 76, 60, 0.45);
-    transition: transform 0.2s;
-    animation: pulse 2.5s ease-in-out infinite;
-}
-
-.install-btn:hover { transform: translateY(-2px); }
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.02); }
-}
-
-.ios-hint, .installed-msg {
-    margin-top: 12px;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    text-align: center;
-    line-height: 1.5;
-}
-
-.ios-hint {
-    background: rgba(52, 152, 219, 0.12);
-    border: 1px solid rgba(52, 152, 219, 0.3);
-    color: #3498db;
-}
-
-.ios-hint strong {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.12);
-    padding: 2px 8px;
-    border-radius: 6px;
-}
-
-.installed-msg {
-    background: rgba(46, 204, 113, 0.15);
-    border: 1px solid rgba(46, 204, 113, 0.4);
-    color: #2ecc71;
-    font-weight: 600;
-}
-
-footer {
-    text-align: center;
-    padding-top: 16px;
-    margin-top: 18px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.55);
-}
-
-.footer-brand { line-height: 1.9; }
-
-.footer-brand a {
-    color: #f39c12;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 0 2px;
-}
-
-.footer-brand a:hover { text-decoration: underline; }
-
-.modal-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    max-width: 100% !important;
-    background: rgba(0, 0, 0, 0.92) !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 16px !important;
-    margin: 0 !important;
-    z-index: 2147483647 !important;
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-}
-
-.modal-overlay.show {
-    display: flex !important;
-}
-
-.modal-card {
-    position: relative !important;
-    width: 100% !important;
-    max-width: 400px !important;
-    min-width: 260px !important;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
-    border: 2px solid rgba(231, 76, 60, 0.5) !important;
-    border-radius: 24px !important;
-    padding: 30px 22px 24px !important;
-    text-align: center !important;
-    box-shadow: 0 25px 70px rgba(231, 76, 60, 0.4) !important;
-    animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-    max-height: calc(100vh - 32px) !important;
-    max-height: calc(100dvh - 32px) !important;
-    overflow-y: auto !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-}
-
-@keyframes modalPop {
-    0%   { transform: scale(0.85); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.modal-icon {
-    font-size: 3rem;
-    margin-bottom: 8px;
-    animation: shake 0.8s ease;
-}
-
-@keyframes shake {
-    0%, 100% { transform: rotate(0deg); }
-    20% { transform: rotate(-12deg); }
-    40% { transform: rotate(12deg); }
-    60% { transform: rotate(-8deg); }
-    80% { transform: rotate(8deg); }
-}
-
-.modal-title {
-    font-size: 1.7rem;
-    font-weight: 800;
-    color: #e74c3c;
-    margin-bottom: 14px;
-    text-shadow: 0 4px 20px rgba(231, 76, 60, 0.5);
-    line-height: 1.3;
-}
-
-.modal-divider {
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.5), transparent);
-    margin: 0 auto 18px;
-    width: 60%;
-}
-
-.modal-message {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.6;
-    font-weight: 500;
-}
-
-.modal-pause {
-    margin: 14px 0;
-    font-size: 1.05rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-style: italic;
-    letter-spacing: 2px;
-}
-
-.modal-hope {
-    font-size: 1.05rem;
-    font-weight: 800;
-    background: linear-gradient(90deg, #f39c12, #f1c40f);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.5;
-    padding: 14px 6px;
-    border-top: 1px dashed rgba(243, 156, 18, 0.4);
-    border-bottom: 1px dashed rgba(243, 156, 18, 0.4);
-    margin: 10px 0 18px;
-}
-
-.modal-record {
-    padding: 12px 16px;
-    background: rgba(241, 196, 15, 0.12);
-    border: 1px solid rgba(241, 196, 15, 0.4);
-    border-radius: 12px;
-    color: #f1c40f;
-    font-size: 0.92rem;
-    font-weight: 700;
-    margin-bottom: 18px;
-    line-height: 1.5;
-    white-space: pre-line;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 12px;
-    flex-direction: column;
-}
-
-.modal-btn {
-    padding: 14px 20px;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.modal-btn.restart {
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-    color: #fff;
-    box-shadow: 0 10px 25px rgba(46, 204, 113, 0.4);
-}
-
-.modal-btn.close {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-@media (max-width: 500px) {
-    body { padding: 10px; }
-    .app-title { font-size: 1.2rem; }
-    .days-count { font-size: 4rem; }
-    .container { padding: 18px 14px; }
-    .lang-btn { padding: 6px 12px; font-size: 0.78rem; }
-    .counter-box { padding: 38px 16px 28px; }
-    .magic-emoji { font-size: 1.6rem; top: 10px; right: 14px; }
-    .daily-magic { font-size: 0.82rem; }
-    .modal-title { font-size: 1.4rem; }
-    .modal-icon { font-size: 2.5rem; }
-    .modal-card { padding: 22px 16px 18px; }
-    .modal-overlay { padding: 10px !important; }
-}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'Noto Sans Devanagari','Poppins',sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#fff;padding:16px;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+#confettiCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+.container{width:100%;max-width:520px;background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:24px;padding:24px 22px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);position:relative;z-index:1}
+.lang-switch{display:flex;justify-content:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.lang-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);padding:8px 18px;border-radius:20px;font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.25s ease}
+.lang-btn.active{background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(231,76,60,0.45)}
+.app-title{font-size:1.5rem;font-weight:800;text-align:center;margin-top:20px;line-height:1.4;background:linear-gradient(90deg,#fff,#f39c12);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.confidence-badge{display:block;text-align:center;margin:14px auto 4px;padding:8px 18px;border-radius:20px;font-size:0.88rem;font-weight:600;background:rgba(52,152,219,0.15);color:#3498db;border:1px solid rgba(52,152,219,0.3);width:fit-content;max-width:100%;transition:all 0.6s ease}
+.record-badge{display:block;text-align:center;margin:10px auto 0;padding:8px 16px;border-radius:14px;font-size:0.82rem;font-weight:700;background:rgba(241,196,15,0.15);color:#f1c40f;border:1px dashed rgba(241,196,15,0.5);width:fit-content;max-width:100%}
+.counter-box{margin:22px 0 16px;padding:44px 20px 34px;border-radius:26px;text-align:center;background:linear-gradient(135deg,#3498db,#2980b9);box-shadow:0 15px 45px rgba(52,152,219,0.5);transition:background 1.5s ease,box-shadow 1.5s ease;position:relative;overflow:hidden;isolation:isolate}
+.counter-box::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,0.25),transparent 55%);pointer-events:none;z-index:1}
+.rainbow-particles{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;border-radius:50%;opacity:0.7;animation:floatUp 6s linear infinite;filter:blur(1px)}
+@keyframes floatUp{0%{transform:translateY(20px) scale(0.6);opacity:0}20%{opacity:0.8}100%{transform:translateY(-120px) scale(1.1);opacity:0}}
+.fireworks{position:absolute;inset:0;pointer-events:none;z-index:2}
+.firework-spark{position:absolute;width:6px;height:6px;border-radius:50%;opacity:0;animation:sparkOut 1.6s ease-out forwards}
+@keyframes sparkOut{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+.days-count{font-size:6rem;font-weight:800;line-height:1;color:#fff;font-family:'Poppins',sans-serif;text-shadow:0 6px 24px rgba(0,0,0,0.35);position:relative;z-index:3;transition:transform 0.4s ease}
+.days-count.bump{animation:bump 0.6s ease}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18)}70%{transform:scale(0.95)}100%{transform:scale(1)}}
+.days-label{font-size:1.2rem;font-weight:700;margin-top:6px;opacity:0.95;letter-spacing:1px;position:relative;z-index:3}
+.sparkles{position:absolute;inset:0;pointer-events:none;z-index:2}
+.sparkle{position:absolute;font-size:1.1rem;opacity:0;animation:sparkleAnim 2.8s ease-in-out infinite}
+@keyframes sparkleAnim{0%,100%{opacity:0;transform:scale(0.5) rotate(0deg)}50%{opacity:1;transform:scale(1.2) rotate(180deg)}}
+.magic-emoji{position:absolute;top:14px;right:18px;font-size:2rem;z-index:4;animation:emojiBounce 2.5s ease-in-out infinite}
+@keyframes emojiBounce{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-8px) rotate(8deg)}}
+.daily-magic{margin-top:16px;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,0.15);backdrop-filter:blur(6px);font-size:0.92rem;font-weight:700;color:#fff;position:relative;z-index:3;line-height:1.4;border:1px solid rgba(255,255,255,0.2)}
+.milestone-badge{margin-top:12px;padding:8px 16px;border-radius:20px;background:rgba(255,255,255,0.25);color:#fff;font-size:0.95rem;font-weight:800;display:inline-block;position:relative;z-index:3;border:2px solid rgba(255,255,255,0.5)}
+.slipped-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 20px;margin-bottom:18px;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.4);color:#e74c3c;border-radius:14px;font-family:inherit;font-size:0.92rem;font-weight:700;cursor:pointer}
+.motivation{background:rgba(255,255,255,0.05);border-left:4px solid #f39c12;padding:16px 18px;border-radius:12px}
+.quote{font-style:italic;font-size:0.98rem;color:rgba(255,255,255,0.92);text-align:center;line-height:1.5}
+.download-image-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:18px;padding:14px 20px;background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;border:none;border-radius:14px;font-family:inherit;font-size:0.98rem;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(52,152,219,0.45)}
+.install-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:20px;padding:15px 20px;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff;border:none;border-radius:14px;font-family:inherit;font-size:1.02rem;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(231,76,60,0.45)}
+.ios-hint,.installed-msg{margin-top:12px;padding:12px 16px;border-radius:12px;font-size:0.85rem;text-align:center;line-height:1.5}
+.ios-hint{background:rgba(52,152,219,0.12);border:1px solid rgba(52,152,219,0.3);color:#3498db}
+.installed-msg{background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.4);color:#2ecc71;font-weight:600}
+.toast-message{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;padding:14px 22px;border-radius:14px;font-size:0.92rem;font-weight:700;box-shadow:0 12px 35px rgba(46,204,113,0.5);opacity:0;transition:all 0.4s ease;z-index:10001;max-width:90%;text-align:center;line-height:1.4;pointer-events:none}
+.toast-message.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{text-align:center;padding-top:16px;margin-top:18px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.78rem;color:rgba(255,255,255,0.55)}
+.footer-brand{line-height:1.9}
+.footer-brand a{color:#f39c12;text-decoration:none;font-weight:600;padding:0 2px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;height:100dvh;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;padding:16px;z-index:2147483647;overflow-y:auto;box-sizing:border-box}
+.modal-overlay.show{display:flex}
+.modal-card{position:relative;width:100%;max-width:400px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:2px solid rgba(231,76,60,0.5);border-radius:24px;padding:30px 22px 24px;text-align:center;box-shadow:0 25px 70px rgba(231,76,60,0.4);max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;box-sizing:border-box}
+.modal-icon{font-size:3rem;margin-bottom:8px}
+.modal-title{font-size:1.7rem;font-weight:800;color:#e74c3c;margin-bottom:14px}
+.modal-divider{height:2px;background:linear-gradient(90deg,transparent,rgba(231,76,60,0.5),transparent);margin:0 auto 18px;width:60%}
+.modal-message{font-size:1rem;color:rgba(255,255,255,0.9);line-height:1.6;font-weight:500}
+.modal-pause{margin:14px 0;font-size:1.05rem;color:rgba(255,255,255,0.6);font-style:italic;letter-spacing:2px}
+.modal-hope{font-size:1.05rem;font-weight:800;background:linear-gradient(90deg,#f39c12,#f1c40f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.5;padding:14px 6px;border-top:1px dashed rgba(243,156,18,0.4);border-bottom:1px dashed rgba(243,156,18,0.4);margin:10px 0 18px}
+.modal-record{padding:12px 16px;background:rgba(241,196,15,0.12);border:1px solid rgba(241,196,15,0.4);border-radius:12px;color:#f1c40f;font-size:0.92rem;font-weight:700;margin-bottom:18px;line-height:1.5;white-space:pre-line}
+.modal-buttons{display:flex;gap:12px;flex-direction:column}
+.modal-btn{padding:14px 20px;border-radius:12px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px}
+.modal-btn.restart{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;box-shadow:0 10px 25px rgba(46,204,113,0.4)}
+.modal-btn.close{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.15)}
+@media (max-width:500px){body{padding:10px}.app-title{font-size:1.2rem}.days-count{font-size:4rem}.container{padding:18px 14px}.lang-btn{padding:6px 12px;font-size:0.78rem}.counter-box{padding:38px 16px 28px}.magic-emoji{font-size:1.6rem;top:10px;right:14px}.daily-magic{font-size:0.82rem}.modal-title{font-size:1.4rem}.modal-icon{font-size:2.5rem}.modal-card{padding:22px 16px 18px}}
 </style>
 </head>
 <body>
 
 <canvas id="confettiCanvas"></canvas>
-
 <div class="container" id="captureArea">
-
-    <div class="lang-switch" role="tablist">
-        <button class="lang-btn active" data-lang="mr" type="button">मराठी</button>
-        <button class="lang-btn" data-lang="hi" type="button">हिंदी</button>
-        <button class="lang-btn" data-lang="en" type="button">English</button>
-    </div>
-
-    <h1 class="app-title" id="appTitle">मी आजपासून दारू सोडली</h1>
-
-    <div class="confidence-badge" id="confidenceBadge">तुमचा प्रवास सुरू झाला आहे 🌱</div>
-
-    <div class="record-badge" id="recordBadge" style="display:none;"></div>
-
-    <div class="counter-box" id="counterBox">
-        <div class="rainbow-particles" id="rainbowParticles"></div>
-        <div class="fireworks" id="fireworks"></div>
-        <div class="days-count" id="daysCount">1</div>
-        <div class="days-label" id="daysLabel">दिवस</div>
-        <div class="sparkles" id="sparkles"></div>
-        <div class="magic-emoji" id="magicEmoji">🌱</div>
-        <div class="daily-magic" id="dailyMagic">आजचा दिवस खास आहे!</div>
-        <div class="milestone-badge" id="milestoneBadge" style="display:none;"></div>
-    </div>
-
-    <button id="slippedBtn" class="slipped-btn" type="button">
-        😔 <span id="slippedBtnText">आज मी घसरलो</span>
-    </button>
-
-    <div class="motivation">
-        <p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p>
-    </div>
-
-    <button id="downloadImageBtn" class="download-image-btn" type="button">
-        📸 <span id="downloadImageBtnText">माझं यश डाउनलोड करा</span>
-    </button>
-
-    <button id="installBtn" class="install-btn" type="button" style="display:none;">
-        📲 <span id="installBtnText">ॲप डाउनलोड करा</span>
-    </button>
-
-    <div id="iosHint" class="ios-hint" style="display:none;">
-        📱 iPhone/iPad? <strong>Share</strong> → <strong>Add to Home Screen</strong> निवडा.
-    </div>
-
-    <div id="installedMsg" class="installed-msg" style="display:none;">
-        ✅ ॲप इन्स्टॉल झालं!
-    </div>
-
-    <footer>
-        <p class="footer-brand">
-            Powered by
-            <a href="https://claimtak.in" target="_blank" rel="noopener">claimtak.in</a> ·
-            <a href="https://punepoona.in" target="_blank" rel="noopener">punepoona.in</a> ·
-            <a href="https://navinpune.com" target="_blank" rel="noopener">navinpune.com</a>
-        </p>
-    </footer>
-
+<div class="lang-switch">
+<button class="lang-btn active" data-lang="mr" type="button">मराठी</button>
+<button class="lang-btn" data-lang="hi" type="button">हिंदी</button>
+<button class="lang-btn" data-lang="en" type="button">English</button>
+</div>
+<h1 class="app-title" id="appTitle">मी आजपासून दारू सोडली</h1>
+<div class="confidence-badge" id="confidenceBadge">तुमचा प्रवास सुरू झाला आहे 🌱</div>
+<div class="record-badge" id="recordBadge" style="display:none;"></div>
+<div class="counter-box" id="counterBox">
+<div class="rainbow-particles" id="rainbowParticles"></div>
+<div class="fireworks" id="fireworks"></div>
+<div class="days-count" id="daysCount">1</div>
+<div class="days-label" id="daysLabel">दिवस</div>
+<div class="sparkles" id="sparkles"></div>
+<div class="magic-emoji" id="magicEmoji">🌱</div>
+<div class="daily-magic" id="dailyMagic">आजचा दिवस खास आहे!</div>
+<div class="milestone-badge" id="milestoneBadge" style="display:none;"></div>
+</div>
+<button id="slippedBtn" class="slipped-btn" type="button">😔 <span id="slippedBtnText">आज मी घसरलो</span></button>
+<div class="motivation"><p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p></div>
+<button id="downloadImageBtn" class="download-image-btn" type="button">📸 <span id="downloadImageBtnText">माझं यश डाउनलोड करा</span></button>
+<button id="installBtn" class="install-btn" type="button">📲 <span id="installBtnText">ॲप डाउनलोड करा</span></button>
+<div id="iosHint" class="ios-hint" style="display:none;">📱 iPhone/iPad? <strong>Share</strong> → <strong>Add to Home Screen</strong></div>
+<div id="installedMsg" class="installed-msg" style="display:none;">✅ ॲप इन्स्टॉल झालं!</div>
+<footer><p class="footer-brand">Powered by <a href="https://claimtak.in">claimtak.in</a> · <a href="https://punepoona.in">punepoona.in</a> · <a href="https://navinpune.com">navinpune.com</a></p></footer>
 </div>
 
 <div class="modal-overlay" id="slippedModal">
-    <div class="modal-card">
-        <div class="modal-icon">🚨</div>
-        <h2 class="modal-title" id="modalTitle">तू घसरलास!</h2>
-        <div class="modal-divider"></div>
-        <p class="modal-message" id="modalLine1">आज तू स्वतःला विसरलास.</p>
-        <p class="modal-message" id="modalLine2">दारू जिंकली. तू हरलास.</p>
-        <p class="modal-pause">पण...</p>
-        <p class="modal-hope" id="modalHope">🏆 खरा योद्धा हरतो — पण शरण जात नाही.</p>
-        <div class="modal-record" id="modalRecord" style="display:none;"></div>
-        <div class="modal-buttons">
-            <button class="modal-btn restart" id="restartBtn" type="button">
-                🔄 <span id="restartBtnText">पुन्हा सुरुवात कर</span>
-            </button>
-            <button class="modal-btn close" id="closeModalBtn" type="button">
-                ❌ <span id="closeBtnText">बंद कर</span>
-            </button>
-        </div>
-    </div>
+<div class="modal-card">
+<div class="modal-icon">🚨</div>
+<h2 class="modal-title" id="modalTitle">तू घसरलास!</h2>
+<div class="modal-divider"></div>
+<p class="modal-message" id="modalLine1">आज तू स्वतःला विसरलास.</p>
+<p class="modal-message" id="modalLine2">दारू जिंकली. तू हरलास.</p>
+<p class="modal-pause">पण...</p>
+<p class="modal-hope" id="modalHope">🏆 खरा योद्धा हरतो — पण शरण जात नाही.</p>
+<div class="modal-record" id="modalRecord" style="display:none;"></div>
+<div class="modal-buttons">
+<button class="modal-btn restart" id="restartBtn" type="button">🔄 <span id="restartBtnText">पुन्हा सुरुवात कर</span></button>
+<button class="modal-btn close" id="closeModalBtn" type="button">❌ <span id="closeBtnText">बंद कर</span></button>
+</div>
+</div>
 </div>
 
 <script>
-(function () {
-    'use strict';
+  (function () {
+'use strict';
+var KEY_START='sobriety_start_date_v9';
+var KEY_LANG='sobriety_lang_v9';
+var KEY_HIGHEST='sobriety_highest_record_v9';
+var KEY_LAST_CONFETTI='sobriety_last_confetti_v9';
 
-    var KEY_START = 'sobriety_start_date_v8';
-    var KEY_LANG  = 'sobriety_lang_v8';
-    var KEY_LAST_CONFETTI = 'sobriety_last_confetti_v8';
-    var KEY_HIGHEST = 'sobriety_highest_record_v8';
+var translations={
+mr:{title:"मी आजपासून दारू सोडली",daysLabel:"दिवस",installBtn:"ॲप डाउनलोड करा",installedMsg:"✅ ॲप इन्स्टॉल झालं!",iosHint:'📱 iPhone/iPad? Share → "Add to Home Screen" निवडा.',slippedBtn:"आज मी घसरलो",modalTitle:"तू घसरलास!",modalLine1:"आज तू स्वतःला विसरलास.",modalLine2:"दारू जिंकली. तू हरलास.",modalHope:"🏆 खरा योद्धा हरतो — पण शरण जात नाही.",restartBtn:"पुन्हा सुरुवात कर",closeBtn:"बंद कर",recordLabel:"तुमचा सर्वोच्च record",recordText:"🔥 तुझा सर्वोच्च record: {N} दिवस\nएकदा का तुझ्यात ताकत होती — अजूनही आहे!",downloadBtn:"माझं यश डाउनलोड करा",downloadingBtn:"तयार होत आहे...",downloadedMsg:"✅ फोटो डाउनलोड झाला!",errorMsg:"❌ डाउनलोड झाला नाही.",confidences:["तुमचा प्रवास सुरू झाला आहे 🌱","तुमचा आत्मविश्वास वाढत आहे 💪","तुम्ही मजबूत होत आहात 🔥","तुमचा विजय जवळ येत आहे 🏆","तुम्ही एक योद्धा आहात ⚡","तुमचं जीवन बदलत आहे 🌟","तुम्ही अजिंक्य आहात 👑"],motivations:["प्रत्येक दिवस हा तुमचा विजय आहे! 🏆","तुम्ही स्वतःसाठी हे करत आहात — हेच खरे प्रेम! ❤️","आजचा दिवस तुमच्या उद्याचा पाया आहे! 🌱","मजबूत राहा, तुम्ही एक योद्धा आहात! 💪","प्रत्येक दिवस तुम्हाला नवीन जीवन देत आहे! 🌅","तुमचा संकल्प हीच तुमची सर्वात मोठी ताकद! 🔥","तुमचं आरोग्य हीच तुमची खरी संपत्ती! 🌿","आज तुम्ही उद्यापेक्षा मजबूत आहात! 🚀"],dailyMagic:["आज पहिला दिवस — नव्या जीवनाची सुरुवात! 🌅","तुमच्या शरीरात नवी उर्जा येत आहे! ⚡","तुमचं मन स्वच्छ होत आहे! 🧘","तुमची त्वचा उजळत आहे! ✨","तुमची झोप सुधारत आहे! 😴","तुमचं हृदय मजबूत होत आहे! ❤️","तुमचं यकृत बरे होत आहे! 💚","तुमच्या कुटुंबाचा आनंद वाढत आहे! 🏡","तुमचा आत्मविश्वास वाढत आहे! 💪","तुमचा संयम वाढत आहे! 🎯","तुमचं वजन नियंत्रित होत आहे! ⚖️","तुमचं रक्तदाब सुधारत आहे! 🩺","तुमची स्मरणशक्ती सुधारत आहे! 🧠","तुमची त्वचा अधिक तरुण दिसत आहे! 🌟","तुमची ऊर्जा वाढत आहे! 🔋","तुमची चिंता कमी होत आहे! ☁️","तुमचं हसू अधिक आहे! 😊","तुमचं नातं सुधारत आहे! 👨‍👩‍👧","तुमचं काम अधिक चांगलं होत आहे! 💼","तुमचा वेळ आणि पैसा वाचत आहे! 💰","तुमचं भविष्य उजळ होत आहे! 🔆","तुमचं जीवन अर्थपूर्ण होत आहे! 🎁","तुमचं मन शांत होत आहे! 🕊️","तुमचं शरीर स्वच्छ होत आहे! 🌿","तुमची त्वचा निरोगी आहे! 🌸","तुमचं आतडं सुधारत आहे! 🍎","तुमचं रक्त शुद्ध होत आहे! 🩸","तुमचं आयुष्य वाढत आहे! ⏳","तुमचा आत्मसन्मान वाढत आहे! 👑","तुम्ही अधिक सुंदर दिसत आहे! 💎"],milestoneLabel:"🎉 महत्त्वाचा टप्पा पूर्ण!"},
+hi:{title:"मैंने आज से शराब छोड़ दी",daysLabel:"दिन",installBtn:"ऐप डाउनलोड करें",installedMsg:"✅ ऐप इंस्टॉल हो गया!",iosHint:'📱 iPhone/iPad? Share → "Add to Home Screen" चुनें।',slippedBtn:"आज मैं फिसल गया",modalTitle:"तू फिसल गया!",modalLine1:"आज तू खुद को भूल गया।",modalLine2:"शराब जीत गई। तू हार गया।",modalHope:"🏆 असली योद्धा हारता है — पर हार नहीं मानता।",restartBtn:"फिर से शुरू कर",closeBtn:"बंद कर",recordLabel:"आपका सर्वोच्च रिकॉर्ड",recordText:"🔥 तेरा सर्वोच्च रिकॉर्ड: {N} दिन\nएक बार तुझमें ताकत थी — अब भी है!",downloadBtn:"मेरी उपलब्धि डाउनलोड करें",downloadingBtn:"तैयार हो रहा है...",downloadedMsg:"✅ फोटो डाउनलोड हो गया!",errorMsg:"❌ डाउनलोड नहीं हुआ।",confidences:["आपकी यात्रा शुरू हो गई है 🌱","आपका आत्मविश्वास बढ़ रहा है 💪","आप मजबूत हो रहे हैं 🔥","आपकी जीत करीब है 🏆","आप एक योद्धा हैं ⚡","आपका जीवन बदल रहा है 🌟","आप अजेय हैं 👑"],motivations:["हर दिन आपकी जीत है! 🏆","आप खुद के लिए यह कर रहे हैं — यही सच्चा प्यार है! ❤️","आज का दिन आपके कल की नींव है! 🌱","मजबूत रहें, आप एक योद्धा हैं! 💪","हर दिन आपको नया जीवन दे रहा है! 🌅","आपका संकल्प ही आपकी सबसे बड़ी ताकत है! 🔥","आपका स्वास्थ्य ही आपकी असली संपत्ति है! 🌿","आज आप कल से ज्यादा मजबूत हैं! 🚀"],dailyMagic:["आज पहला दिन — नए जीवन की शुरुआत! 🌅","आपके शरीर में नई ऊर्जा आ रही है! ⚡","आपका मन साफ हो रहा है! 🧘","आपकी त्वचा निखर रही है! ✨","आपकी नींद सुधर रही है! 😴","आपका दिल मजबूत हो रहा है! ❤️","आपका लिवर ठीक हो रहा है! 💚","आपके परिवार की खुशी बढ़ रही है! 🏡","आपका आत्मविश्वास बढ़ रहा है! 💪","आपका संयम बढ़ रहा है! 🎯","आपका वजन नियंत्रित हो रहा है! ⚖️","आपका रक्तचाप सुधर रहा है! 🩺","आपकी याददाश्त सुधर रही है! 🧠","आपकी त्वचा और जवान दिख रही है! 🌟","आपकी ऊर्जा बढ़ रही है! 🔋","आपकी चिंता कम हो रही है! ☁️","आपकी हँसी बढ़ रही है! 😊","आपके रिश्ते सुधर रहे हैं! 👨‍👩‍👧","आपका काम बेहतर हो रहा है! 💼","आपका समय और पैसा बच रहा है! 💰","आपका भविष्य उज्ज्वल हो रहा है! 🔆","आपका जीवन सार्थक हो रहा है! 🎁","आपका मन शांत हो रहा है! 🕊️","आपका शरीर साफ हो रहा है! 🌿","आपकी त्वचा स्वस्थ है! 🌸","आपका पेट सुधर रहा है! 🍎","आपका रक्त शुद्ध हो रहा है! 🩸","आपकी उम्र बढ़ रही है! ⏳","आपका आत्मसम्मान बढ़ रहा है! 👑","आप और सुंदर दिख रहे हैं! 💎"],milestoneLabel:"🎉 महत्वपूर्ण पड़ाव पूरा!"},
+en:{title:"I Quit Alcohol From Today",daysLabel:"Days",installBtn:"Download App",installedMsg:"✅ App installed!",iosHint:'📱 On iPhone/iPad? Tap Share → "Add to Home Screen".',slippedBtn:"I slipped today",modalTitle:"You slipped!",modalLine1:"Today you forgot yourself.",modalLine2:"Alcohol won. You lost.",modalHope:"🏆 A true warrior falls — but never surrenders.",restartBtn:"Start again",closeBtn:"Close",recordLabel:"Your highest record",recordText:"🔥 Your highest record: {N} days\nYou once had the strength — you still do!",downloadBtn:"Download my achievement",downloadingBtn:"Preparing...",downloadedMsg:"✅ Photo downloaded!",errorMsg:"❌ Download failed.",confidences:["Your journey has begun 🌱","Your confidence is growing 💪","You are getting stronger 🔥","Your victory is near 🏆","You are a warrior ⚡","Your life is transforming 🌟","You are unstoppable 👑"],motivations:["Every day is your victory! 🏆","You are doing this for yourself — that's true love! ❤️","Today is the foundation of your tomorrow! 🌱","Stay strong, you are a warrior! 💪","Every day is giving you a new life! 🌅","Your determination is your greatest strength! 🔥","Your health is your true wealth! 🌿","Today you are stronger than yesterday! 🚀"],dailyMagic:["Day one — the start of a new life! 🌅","New energy is flowing through you! ⚡","Your mind is clearing up! 🧘","Your skin is glowing! ✨","Your sleep is improving! 😴","Your heart is getting stronger! ❤️","Your liver is healing! 💚","Your family's joy is growing! 🏡","Your confidence is rising! 💪","Your self-control is growing! 🎯","Your weight is balancing! ⚖️","Your blood pressure is improving! 🩺","Your memory is sharpening! 🧠","Your skin looks younger! 🌟","Your energy is increasing! 🔋","Your anxiety is fading! ☁️","Your smile is brighter! 😊","Your relationships are healing! 👨‍👩‍👧","Your work is improving! 💼","Your time and money are saving! 💰","Your future is getting brighter! 🔆","Your life is becoming meaningful! 🎁","Your mind is becoming calm! 🕊️","Your body is getting cleaner! 🌿","Your skin is healthy! 🌸","Your gut is healing! 🍎","Your blood is purifying! 🩸","Your lifespan is increasing! ⏳","Your self-respect is rising! 👑","You look more beautiful! 💎"],milestoneLabel:"🎉 Major milestone achieved!"}
+};
 
-    var translations = {
-        mr: {
-            title: "मी आजपासून दारू सोडली",
-            daysLabel: "दिवस",
-            installBtn: "ॲप डाउनलोड करा",
-            installedMsg: "✅ ॲप इन्स्टॉल झालं!",
-            iosHint: '📱 iPhone/iPad? Share → "Add to Home Screen" निवडा.',
-            slippedBtn: "आज मी घसरलो",
-            modalTitle: "तू घसरलास!",
-            modalLine1: "आज तू स्वतःला विसरलास.",
-            modalLine2: "दारू जिंकली. तू हरलास.",
-            modalHope: "🏆 खरा योद्धा हरतो — पण शरण जात नाही.",
-            restartBtn: "पुन्हा सुरुवात कर",
-            closeBtn: "बंद कर",
-            recordLabel: "तुमचा सर्वोच्च record",
-            recordText: "🔥 तुझा सर्वोच्च record: {N} दिवस\nएकदा का तुझ्यात ताकत होती — अजूनही आहे!",
-            downloadBtn: "माझं यश डाउनलोड करा",
-            downloadingBtn: "तयार होत आहे...",
-            downloadedMsg: "✅ फोटो डाउनलोड झाला! Facebook ग्रुपवर शेअर करा!",
-            errorMsg: "❌ डाउनलोड झाला नाही. पुन्हा प्रयत्न करा.",
-            confidences: [
-                "तुमचा प्रवास सुरू झाला आहे 🌱",
-                "तुमचा आत्मविश्वास वाढत आहे 💪",
-                "तुम्ही मजबूत होत आहात 🔥",
-                "तुमचा विजय जवळ येत आहे 🏆",
-                "तुम्ही एक योद्धा आहात ⚡",
-                "तुमचं जीवन बदलत आहे 🌟",
-                "तुम्ही अजिंक्य आहात 👑"
-            ],
-            motivations: [
-                "प्रत्येक दिवस हा तुमचा विजय आहे! 🏆",
-                "तुम्ही स्वतःसाठी हे करत आहात — हेच खरे प्रेम! ❤️",
-                "आजचा दिवस तुमच्या उद्याचा पाया आहे! 🌱",
-                "मजबूत राहा, तुम्ही एक योद्धा आहात! 💪",
-                "प्रत्येक दिवस तुम्हाला नवीन जीवन देत आहे! 🌅",
-                "तुमचा संकल्प हीच तुमची सर्वात मोठी ताकद! 🔥",
-                "तुमचं आरोग्य हीच तुमची खरी संपत्ती! 🌿",
-                "आज तुम्ही उद्यापेक्षा मजबूत आहात! 🚀"
-            ],
-            dailyMagic: [
-                "आज पहिला दिवस — नव्या जीवनाची सुरुवात! 🌅",
-                "तुमच्या शरीरात नवी उर्जा येत आहे! ⚡",
-                "तुमचं मन स्वच्छ होत आहे! 🧘",
-                "तुमची त्वचा उजळत आहे! ✨",
-                "तुमची झोप सुधारत आहे! 😴",
-                "तुमचं हृदय मजबूत होत आहे! ❤️",
-                "तुमचं यकृत बरे होत आहे! 💚",
-                "तुमच्या कुटुंबाचा आनंद वाढत आहे! 🏡",
-                "तुमचा आत्मविश्वास वाढत आहे! 💪",
-                "तुमचा संयम वाढत आहे! 🎯",
-                "तुमचं वजन नियंत्रित होत आहे! ⚖️",
-                "तुमचं रक्तदाब सुधारत आहे! 🩺",
-                "तुमची स्मरणशक्ती सुधारत आहे! 🧠",
-                "तुमची त्वचा अधिक तरुण दिसत आहे! 🌟",
-                "तुमची ऊर्जा वाढत आहे! 🔋",
-                "तुमची चिंता कमी होत आहे! ☁️",
-                "तुमचं हसू अधिक आहे! 😊",
-                "तुमचं नातं सुधारत आहे! 👨‍👩‍👧",
-                "तुमचं काम अधिक चांगलं होत आहे! 💼",
-                "तुमचा वेळ आणि पैसा वाचत आहे! 💰",
-                "तुमचं भविष्य उजळ होत आहे! 🔆",
-                "तुमचं जीवन अर्थपूर्ण होत आहे! 🎁",
-                "तुमचं मन शांत होत आहे! 🕊️",
-                "तुमचं शरीर स्वच्छ होत आहे! 🌿",
-                "
+var rainbowPalette=[{c1:'#e74c3c',c2:'#c0392b',glow:'rgba(231,76,60,0.55)'},{c1:'#e67e22',c2:'#d35400',glow:'rgba(230,126,34,0.55)'},{c1:'#f39c12',c2:'#e67e22',glow:'rgba(243,156,18,0.55)'},{c1:'#f1c40f',c2:'#f39c12',glow:'rgba(241,196,15,0.55)'},{c1:'#2ecc71',c2:'#27ae60',glow:'rgba(46,204,113,0.55)'},{c1:'#1abc9c',c2:'#16a085',glow:'rgba(26,188,156,0.55)'},{c1:'#3498db',c2:'#2980b9',glow:'rgba(52,152,219,0.55)'},{c1:'#9b59b6',c2:'#8e44ad',glow:'rgba(155,89,182,0.55)'},{c1:'#e91e63',c2:'#c2185b',glow:'rgba(233,30,99,0.55)'}];
+var milestones=[7,30,90,180,365,730,1095];
+
+var $=function(id){return document.getElementById(id)};
+var appTitleEl=$('appTitle'),daysCountEl=$('daysCount'),daysLabelEl=$('daysLabel'),motivationEl=$('motivationText'),confidenceEl=$('confidenceBadge'),counterBox=$('counterBox'),recordBadgeEl=$('recordBadge'),langButtons=document.querySelectorAll('.lang-btn'),installBtn=$('installBtn'),installBtnText=$('installBtnText'),iosHint=$('iosHint'),installedMsg=$('installedMsg'),magicEmojiEl=$('magicEmoji'),dailyMagicEl=$('dailyMagic'),milestoneEl=$('milestoneBadge'),rainbowParticlesEl=$('rainbowParticles'),fireworksEl=$('fireworks'),sparklesEl=$('sparkles'),confettiCanvas=$('confettiCanvas');
+var slippedBtn=$('slippedBtn'),slippedBtnText=$('slippedBtnText'),slippedModal=$('slippedModal'),modalTitle=$('modalTitle'),modalLine1=$('modalLine1'),modalLine2=$('modalLine2'),modalHope=$('modalHope'),modalRecord=$('modalRecord'),restartBtn=$('restartBtn'),closeModalBtn=$('closeModalBtn'),restartBtnText=$('restartBtnText'),closeBtnText=$('closeBtnText');
+var downloadBtn=$('downloadImageBtn'),downloadBtnText=$('downloadImageBtnText');
+
+var currentLang='mr',currentDays=-1,tickTimerId=null,deferredPrompt=null;
+
+function getTodayStart(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate(),0,0,0,0)}
+function getStartDate(){var r=localStorage.getItem(KEY_START);if(r){var d=new Date(r);if(!isNaN(d.getTime()))return d}var s=getTodayStart();localStorage.setItem(KEY_START,s.toISOString());return s}
+function calculateDays(){var s=getStartDate();var t=getTodayStart();var diff=Math.floor((t.getTime()-s.getTime())/86400000);return Math.max(1,diff+1)}
+function getHighestRecord(){var v=parseInt(localStorage.getItem(KEY_HIGHEST)||'0',10);return isNaN(v)?0:v}
+function setHighestRecord(n){if(n>getHighestRecord())localStorage.setItem(KEY_HIGHEST,String(n))}
+function getRainbowForDay(d){return rainbowPalette[(d-1)%rainbowPalette.length]}
+function getDailyEmoji(d){var e=['🌱','🌿','🍀','🌳','🌸','🌻','🌞','⭐','✨','🌟','💎','👑','🏆','🎯','🔥','⚡','💪','❤️','🎁','🌈','🦋','🌺','🍁','🌊','🗻','🦁','🐯','🚀','🎨','🎵'];return e[(d-1)%e.length]}
+function getMilestone(d){for(var i=0;i<milestones.length;i++)if(d===milestones[i])return milestones[i];return null}
+
+var confettiParticles=[],confettiRunning=false;
+function resizeCanvas(){confettiCanvas.width=window.innerWidth;confettiCanvas.height=window.innerHeight}
+window.addEventListener('resize',resizeCanvas);resizeCanvas();
+function spawnConfetti(count){var colors=['#f39c12','#e74c3c','#3498db','#2ecc71','#9b59b6','#f1c40f','#e91e63','#1abc9c'];for(var i=0;i<count;i++){confettiParticles.push({x:Math.random()*confettiCanvas.width,y:-20-Math.random()*100,vx:(Math.random()-0.5)*3,vy:2+Math.random()*3,size:6+Math.random()*8,color:colors[Math.floor(Math.random()*colors.length)],rotation:Math.random()*Math.PI*2,rotSpeed:(Math.random()-0.5)*0.2,shape:Math.random()<0.5?'rect':'circle',life:1})}if(!confettiRunning){confettiRunning=true;requestAnimationFrame(confettiLoop)}}
+function confettiLoop(){var ctx=confettiCanvas.getContext('2d');ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);for(var i=confettiParticles.length-1;i>=0;i--){var p=confettiParticles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.rotation+=p.rotSpeed;p.life-=0.004;ctx.save();ctx.globalAlpha=Math.max(0,p.life);ctx.translate(p.x,p.y);ctx.rotate(p.rotation);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6)}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill()}ctx.restore();if(p.y>confettiCanvas.height+30||p.life<=0)confettiParticles.splice(i,1)}if(confettiParticles.length>0)requestAnimationFrame(confettiLoop);else confettiRunning=false}
+function triggerFireworks(colors,count){count=count||2;colors=colors||['#f39c12','#e74c3c','#3498db','#2ecc71','#9b59b6','#f1c40f'];for(var c=0;c<count;c++){var ox=20+Math.random()*60,oy=20+Math.random()*50,sc=16+Math.floor(Math.random()*8);for(var i=0;i<sc;i++){var a=(Math.PI*2*i)/sc,dist=60+Math.random()*80,sp=document.createElement('span');sp.className='firework-spark';sp.style.left=ox+'%';sp.style.top=oy+'%';sp.style.background=colors[Math.floor(Math.random()*colors.length)];sp.style.setProperty('--tx',Math.cos(a)*dist+'px');sp.style.setProperty('--ty',Math.sin(a)*dist+'px');sp.style.animationDelay=(c*0.15)+'s';fireworksEl.appendChild(sp);(function(s){setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},2000)})(sp)}}}
+function refreshSparkles(days){sparklesEl.innerHTML='';var count=Math.min(8,3+Math.floor(days/10)),icons=['✨','⭐','🌟','💫'];for(var i=0;i<count;i++){var sp=document.createElement('span');sp.className='sparkle';sp.textContent=icons[Math.floor(Math.random()*icons.length)];sp.style.left=(5+Math.random()*90)+'%';sp.style.top=(5+Math.random()*85)+'%';sp.style.animationDelay=(Math.random()*2.5)+'s';sparklesEl.appendChild(sp)}}
+function refreshRainbowParticles(days){rainbowParticlesEl.innerHTML='';var count=10+Math.min(20,days);for(var i=0;i<count;i++){var p=document.createElement('span');p.className='particle';var color=rainbowPalette[(days+i)%rainbowPalette.length].c1;p.style.background=color;p.style.left=Math.random()*100+'%';p.style.bottom='-10px';var size=4+Math.random()*6;p.style.width=size+'px';p.style.height=size+'px';p.style.animationDelay=(Math.random()*6)+'s';p.style.animationDuration=(4+Math.random()*4)+'s';rainbowParticlesEl.appendChild(p)}}
+
+function setLanguage(lang){if(!translations[lang])lang='mr';currentLang=lang;localStorage.setItem(KEY_LANG,lang);document.documentElement.lang=lang;langButtons.forEach(function(b){b.classList.toggle('active',b.dataset.lang===lang)});var t=translations[lang];appTitleEl.textContent=t.title;daysLabelEl.textContent=t.daysLabel;if(installBtnText)installBtnText.textContent=t.installBtn;if(installedMsg)installedMsg.textContent=t.installedMsg;if(iosHint)iosHint.textContent=t.iosHint;if(slippedBtnText)slippedBtnText.textContent=t.slippedBtn;if(modalTitle)modalTitle.textContent=t.modalTitle;if(modalLine1)modalLine1.textContent=t.modalLine1;if(modalLine2)modalLine2.textContent=t.modalLine2;if(modalHope)modalHope.textContent=t.modalHope;if(restartBtnText)restartBtnText.textContent=t.restartBtn;if(closeBtnText)closeBtnText.textContent=t.closeBtn;if(downloadBtnText)downloadBtnText.textContent=t.downloadBtn;applyEverything(currentDays)}
+
+function applyEverything(days){var t=translations[currentLang];if(!t)return;var sd=Math.max(1,days);var rb=getRainbowForDay(sd);counterBox.style.background='linear-gradient(135deg,'+rb.c1+','+rb.c2+')';counterBox.style.boxShadow='0 15px 45px '+rb.glow;var ci=Math.min(t.confidences.length-1,Math.floor(sd/30));confidenceEl.textContent=t.confidences[ci];confidenceEl.style.borderColor=rb.c1;confidenceEl.style.color=rb.c1;motivationEl.textContent=t.motivations[sd%t.motivations.length];var mi=(sd-1)%30;dailyMagicEl.textContent=t.dailyMagic[mi]||t.dailyMagic[0];magicEmojiEl.textContent=getDailyEmoji(sd);var ms=getMilestone(sd);if(ms){milestoneEl.style.display='inline-block';milestoneEl.textContent=t.milestoneLabel+' ('+ms+')'}else{milestoneEl.style.display='none'}var hi=getHighestRecord();if(hi>0&&hi>sd){recordBadgeEl.style.display='block';recordBadgeEl.textContent='🔥 '+t.recordLabel+': '+hi+' '+t.daysLabel}else{recordBadgeEl.style.display='none'}refreshSparkles(sd);refreshRainbowParticles(sd)}
+
+function updateDays(){var d=calculateDays();if(d!==currentDays){var prev=currentDays;currentDays=d;daysCountEl.textContent=d.toLocaleString('en-IN');if(prev!==-1&&d>prev){daysCountEl.classList.remove('bump');void daysCountEl.offsetWidth;daysCountEl.classList.add('bump');var rb=getRainbowForDay(d);triggerFireworks([rb.c1,rb.c2,'#f1c40f','#3498db','#2ecc71'],2);spawnConfetti(60)}setHighestRecord(d);applyEverything(d);if(getMilestone(d)){setTimeout(function(){spawnConfetti(150);setTimeout(function(){spawnConfetti(120)},600);triggerFireworks(['#f39c12','#e74c3c','#f1c40f','#2ecc71','#9b59b6'],5)},300)}}}
+
+function openSlippedModal(){var t=translations[currentLang],hi=getHighestRecord();if(hi>0){modalRecord.style.display='block';modalRecord.textContent=t.recordText.replace('{N}',hi)}else{modalRecord.style.display='none'}slippedModal.classList.add('show')}
+function closeSlippedModal(){slippedModal.classList.remove('show')}
+function restartCounter(){var t=getTodayStart();localStorage.setItem(KEY_START,t.toISOString());currentDays=-1;closeSlippedModal();updateDays();setTimeout(function(){spawnConfetti(60)},300)}
+
+if(slippedBtn)slippedBtn.addEventListener('click',openSlippedModal);
+if(closeModalBtn)closeModalBtn.addEventListener('click',closeSlippedModal);
+if(restartBtn)restartBtn.addEventListener('click',restartCounter);
+if(slippedModal)slippedModal.addEventListener('click',function(e){if(e.target===slippedModal)closeSlippedModal()});
+
+function showToast(msg){var t=document.createElement('div');t.className='toast-message';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.classList.add('show')},50);setTimeout(function(){t.classList.remove('show');setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},400)},3500)}
+
+function downloadAchievementImage(){if(typeof html2canvas==='undefined'){alert('Image library load नाही झाली. Page refresh करा.');return}var t=translations[currentLang],orig=downloadBtnText.textContent;downloadBtnText.textContent=t.downloadingBtn;downloadBtn.disabled=true;downloadBtn.style.opacity='0.7';confettiCanvas.style.visibility='hidden';var cap=document.getElementById('captureArea');setTimeout(function(){html2canvas(cap,{backgroundColor:'#1a1a2e',scale:2,logging:false,useCORS:true,allowTaint:true}).then(function(canvas){var filename='day-'+currentDays+'-achievement.png';canvas.toBlob(function(blob){var url=URL.createObjectURL(blob);var link=document.createElement('a');link.download=filename;link.href=url;document.body.appendChild(link);link.click();document.body.removeChild(link);setTimeout(function(){URL.revokeObjectURL(url)},2000);downloadBtnText.textContent=orig;downloadBtn.disabled=false;downloadBtn.style.opacity='1';confettiCanvas.style.visibility='visible';showToast(t.downloadedMsg);spawnConfetti(60)},'image/png')}).catch(function(err){console.error(err);downloadBtnText.textContent=orig;downloadBtn.disabled=false;downloadBtn.style.opacity='1';confettiCanvas.style.visibility='visible';showToast(t.errorMsg)})},300)}
+if(downloadBtn)downloadBtn.addEventListener('click',downloadAchievementImage);
+
+function isStandalone(){return(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true}
+function isIOS(){return/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream}
+
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(installBtn)installBtn.style.display='flex'});
+window.addEventListener('appinstalled',function(){deferredPrompt=null;if(installBtn)installBtn.style.display='none';if(installedMsg){installedMsg.style.display='block';setTimeout(function(){installedMsg.style.display='none'},6000)}});
+
+if(installBtn){installBtn.addEventListener('click',function(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(c){if(c&&c.outcome==='accepted'){if(installedMsg){installedMsg.style.display='block';setTimeout(function(){installedMsg.style.display='none'},6000)}}deferredPrompt=null;installBtn.style.display='none'});return}if(isIOS()){if(iosHint)iosHint.style.display='block';return}var msg=currentLang==='mr'?'कृपया Chrome/Edge वापरा किंवा ब्राउझर मेनू (⋮) → "Install app" / "Add to Home screen" निवडा.':currentLang==='hi'?'Chrome/Edge उपयोग करें या मेनू (⋮) → "Install app" / "Add to Home screen" चुनें।':'Please use Chrome/Edge or menu (⋮) → "Install app" / "Add to Home screen".';alert(msg)})}
+
+if(isIOS()&&!isStandalone()){if(installBtn)installBtn.style.display='flex';if(iosHint)iosHint.style.display='block'}
+if(isStandalone()){if(installBtn)installBtn.style.display='none';if(iosHint)iosHint.style.display='none'}
+
+function scheduleMidnightTick(){if(tickTimerId)clearInterval(tickTimerId);tickTimerId=setInterval(updateDays,30*1000)}
+
+function init(){var sl=localStorage.getItem(KEY_LANG);if(sl&&translations[sl])currentLang=sl;else{var nav=(navigator.language||'mr').toLowerCase();if(nav.indexOf('hi')===0)currentLang='hi';else if(nav.indexOf('en')===0)currentLang='en';else currentLang='mr'}langButtons.forEach(function(b){b.addEventListener('click',function(){setLanguage(b.dataset.lang)})});
+</body>
+</html>
+    
