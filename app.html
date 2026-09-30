@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c0392b">
+<title>माझा प्रवास</title>
+<link rel="manifest" href="./manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f3fb;--fg:#1d1830;--mut:#6b6485;--card:#fff;--line:#ded8ee;--acc:#c0392b;--gold:#e8b64c}
+@media(prefers-color-scheme:dark){:root{--bg:#15131f;--fg:#f5f1ff;--mut:#a9a3c2;--card:#201d31;--line:#2f2b46;--acc:#e8590c;--gold:#ffb84d}}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:'Noto Sans Devanagari','Nirmala UI',system-ui,sans-serif;padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center}
+main{width:100%;max-width:460px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.top img{width:52px;height:52px;flex:0 0 52px}
+.top .who{font-weight:800;font-size:1.05rem;line-height:1.3}
+.top .who small{display:block;font-weight:500;color:var(--mut);font-size:.85rem}
+.langs{display:flex;gap:6px;margin:0 0 12px;justify-content:flex-end}
+.langs button{font:inherit;font-weight:500;font-size:.82rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer}
+.langs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+canvas{display:block;width:100%;height:auto;aspect-ratio:1080/1350;border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.28)}
+.row{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.btn{font:inherit;font-weight:800;font-size:1rem;padding:14px;border-radius:14px;border:0;cursor:pointer;text-align:center;text-decoration:none;display:block}
+.share{background:var(--acc);color:#fff}
+.grp{background:var(--card);color:var(--fg);border:1px solid var(--line)}
+.slip{background:transparent;color:var(--mut);border:1px solid var(--line);font-weight:500}
+.prof{background:var(--card);color:var(--fg);border:1px solid var(--line)}
+.btn:focus-visible,.langs button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+footer{margin-top:18px;text-align:center;font-size:.8rem;color:var(--mut);line-height:1.8}
+footer a{color:var(--acc);text-decoration:none;font-weight:600;margin:0 4px}
+.ov{position:fixed;inset:0;background:rgba(10,8,20,.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.ov.show{display:flex}
+.mc{background:var(--card);border-radius:22px;padding:26px 20px 20px;max-width:380px;width:100%;text-align:center;max-height:100%;overflow:auto}
+.mc h2{font-size:1.4rem;font-weight:800;margin-bottom:10px}
+.mc p{line-height:1.6;margin-bottom:10px}
+.mc .rec{color:var(--acc);font-weight:800}
+.mc .btn{margin-top:8px;width:100%}
+.mc .go{background:var(--acc);color:#fff}
+.mc .cl{background:transparent;color:var(--mut);border:1px solid var(--line);font-weight:500}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:12px;font-size:.9rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:11}
+.toast.show{opacity:1}
+.badge{display:inline-block;background:var(--gold);color:#1d1830;font-weight:800;font-size:.8rem;padding:6px 14px;border-radius:999px;margin:0 0 12px}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <img src="./cover.png" alt="STOP! दि किंग">
+    <div class="who">
+      <span id="hiName">नमस्कार</span>
+      <small id="hiAge"></small>
+    </div>
+  </div>
+
+  <div class="langs" id="langs">
+    <button data-l="mr" type="button">मराठी</button>
+    <button data-l="hi" type="button">हिंदी</button>
+    <button data-l="en" type="button">English</button>
+  </div>
+
+  <div id="badgeWrap" style="text-align:center"></div>
+
+  <canvas id="cv" width="1080" height="1350" role="img"></canvas>
+
+  <div class="row">
+    <button class="btn share" id="shBtn" type="button"></button>
+    <button class="btn slip" id="slBtn" type="button"></button>
+    <a class="btn prof" id="prBtn" href="./profile.html">प्रोफाइल</a>
+  </div>
+
+  <footer>
+    <a href="https://punepoona.in">punepoona.in</a>·
+    <a href="https://claimtak.in">claimtak.in</a>·
+    <a href="https://navinpune.com">navinpune.com</a>
+  </footer>
+</main>
+
+<div class="ov" id="ov"><div class="mc">
+  <h2 id="mT"></h2>
+  <p id="mX"></p>
+  <p class="rec" id="mR"></p>
+  <button class="btn go" id="goBtn" type="button"></button>
+  <button class="btn cl" id="clBtn" type="button"></button>
+</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var GROUP_URL = ''; // Facebook group link इथे टाका
+var K = { s:'sd_start_v1', l:'sd_lang_v1', h:'sd_high_v1', n:'sd_name', a:'sd_age' };
+var BRAND = 'punepoona.in · claimtak.in · navinpune.com';
+var MS = [7,30,90,180,365,730,1095];
+var PAL = [
+  ['#ff7e5f','#8e2de2'],['#11998e','#1b3a6b'],['#f7971e','#c0392b'],
+  ['#4568dc','#b06ab3'],['#00b09b','#3a7bd5'],['#e96443','#904e95'],
+  ['#396afc','#2948ff'],['#c471f5','#fa71cd'],['#1d976c','#0f2c59'],
+  ['#f12711','#f5af19']
+];
+var T = {
+mr:{t:'मी आजपासून दारू सोडली',d:'दिवस',sh:'आजचं यश शेअर करा',gr:'ग्रुपमध्ये सामील व्हा',sl:'आज मी घसरलो',pr:'प्रोफाइल',mt:'काळजी करू नका',
+mx:'एक दिवस घसरणं म्हणजे प्रवासाचा शेवट नाही. तुम्ही टिकून राहिलात, आणि ती ताकद अजूनही तुमच्यातच आहे.',
+mr2:'तुमचा सर्वोच्च record: {N} दिवस',go:'पुन्हा सुरुवात करा',cl:'बंद करा',dl:'इमेज डाउनलोड झाली',ms:'महत्त्वाचा टप्पा!',
+hi:'नमस्कार', age:'वय: {A}',
+q:['आजचा दिवस तुमचा आहे. एक एक दिवस जिंकत चला.','तुमचं शरीर आज थोडं अधिक निरोगी आहे.','स्वच्छ मन, शांत झोप — हे तुमचंच यश आहे.','तुमच्या कुटुंबाला तुमचा अभिमान वाटतो.','आज वाचलेला पैसा उद्याचं भविष्य घडवतो.','इच्छा येते आणि जाते. तुम्ही टिकून राहा.','तुम्ही स्वतःला दिलेलं वचन पाळत आहात.','प्रत्येक सकाळ आता अधिक ताजी आहे.','आज तुम्ही कालपेक्षा अधिक मजबूत आहात.','एक दिवस, एक पाऊल. तुम्ही योग्य वाटेवर आहात.','तुमची शिस्तच तुमची खरी ताकद आहे.','तुम्ही केवळ दारू सोडत नाही, नवं आयुष्य घडवत आहात.']},
+hi:{t:'मैंने आज से शराब छोड़ दी',d:'दिन',sh:'आज की उपलब्धि शेयर करें',gr:'ग्रुप से जुड़ें',sl:'आज मैं फिसल गया',pr:'प्रोफाइल',mt:'चिंता मत कीजिए',
+mx:'एक दिन फिसल जाना यात्रा का अंत नहीं है। आप डटे रहे, और वह ताकत अब भी आपके भीतर है।',
+mr2:'आपका सर्वोच्च रिकॉर्ड: {N} दिन',go:'फिर से शुरू करें',cl:'बंद करें',dl:'इमेज डाउनलोड हो गई',ms:'महत्वपूर्ण पड़ाव!',
+hi:'नमस्ते', age:'उम्र: {A}',
+q:['आज का दिन आपका है। एक-एक दिन जीतते चलिए।','आपका शरीर आज थोड़ा और स्वस्थ है।','साफ मन, शांत नींद — यह आपकी ही जीत है।','आपके परिवार को आप पर गर्व है।','आज बचा पैसा कल का भविष्य बनाता है।','इच्छा आती है और चली जाती है। आप डटे रहिए।','आप खुद से किया वादा निभा रहे हैं।','हर सुबह अब और ताज़ा है।','आज आप कल से ज़्यादा मजबूत हैं।','एक दिन, एक कदम। आप सही राह पर हैं।','आपका अनुशासन ही आपकी असली ताकत है।','आप सिर्फ शराब नहीं छोड़ रहे, नया जीवन बना रहे हैं।']},
+en:{t:'I Quit Alcohol From Today',d:'Days',sh:"Share today's win",gr:'Join our group',sl:'I slipped today',pr:'Profile',mt:"Don't worry",
+mx:"One slip is not the end of the journey. You kept going, and that strength is still in you.",
+mr2:'Your highest record: {N} days',go:'Start again',cl:'Close',dl:'Image downloaded',ms:'Major milestone!',
+hi:'Hello', age:'Age: {A}',
+q:["Today is yours. Win one day at a time.",'Your body is a little healthier today.','A clear mind and calm sleep — that is your win.','Your family is proud of you.','The money you save today builds tomorrow.','Cravings come and go. You stay.','You are keeping the promise you made to yourself.','Every morning feels fresher now.','You are stronger today than yesterday.','One day, one step. You are on the right path.','Your discipline is your real strength.',"You're not just quitting alcohol, you're building a new life."]}
+};
+var $ = function(i){ return document.getElementById(i); };
+var cv = $('cv'), ctx = cv.getContext('2d'), lang = 'mr', days = 0;
+function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function today(){ var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+function start(){ var r = get(K.s), d = r ? new Date(r) : null; if(!d || isNaN(d)){ d = today(); set(K.s, d.toISOString()); } return d; }
+function calc(){ return Math.max(1, Math.round((today() - start()) / 864e5) + 1); }
+function high(){ var v = parseInt(get(K.h) || '0', 10); return isNaN(v) ? 0 : v; }
+function rng(s){ return function(){ s|=0; s=s+0x6D2B79F5|0; var t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function wrap(txt,max){ var w=txt.split(' '),ls=[],c=''; w.forEach(function(x){ var n=c?c+' '+x:x; if(ctx.measureText(n).width>max&&c){ ls.push(c); c=x; } else c=n; }); if(c)ls.push(c); return ls; }
+function drawLines(txt,y,lh,max){ var ls=wrap(txt,max); ls.forEach(function(l,i){ ctx.fillText(l,540,y+i*lh); }); return y+ls.length*lh; }
+
+function draw(){
+  var t=T[lang], p=PAL[(days-1)%PAL.length], W=1080, H=1350;
+  var f="'Noto Sans Devanagari','Nirmala UI',sans-serif";
+  var g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,p[0]); g.addColorStop(1,p[1]);
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  var r=rng(days*7919);
+  for(var i=0;i<7;i++){ ctx.beginPath(); ctx.fillStyle='rgba(255,255,255,'+(0.05+r()*0.08)+')'; ctx.arc(r()*W,r()*H,90+r()*260,0,7); ctx.fill(); }
+  ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.font='800 56px '+f; drawLines(t.t,130,74,900);
+  ctx.font='800 400px '+f; ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=30; ctx.shadowOffsetY=10;
+  ctx.fillText(String(days),540,700);
+  ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+  ctx.font='800 78px '+f; ctx.fillText(t.d,540,800);
+  var y=890;
+  if(MS.indexOf(days)>-1){ ctx.font='800 44px '+f; ctx.fillText('★ '+t.ms+' ★',540,y); y+=76; }
+  ctx.font='500 54px '+f; drawLines(t.q[(days-1)%t.q.length],y+10,76,860);
+  ctx.font='500 32px '+f; ctx.globalAlpha=.9; ctx.fillText(BRAND,540,1290); ctx.globalAlpha=1;
+  cv.setAttribute('aria-label',t.t+': '+days+' '+t.d);
+}
+function ui(){
+  var t=T[lang]; document.documentElement.lang=lang;
+  $('shBtn').textContent=t.sh; $('slBtn').textContent=t.sl;
+  $('mT').textContent=t.mt; $('mX').textContent=t.mx;
+  $('goBtn').textContent=t.go; $('clBtn').textContent=t.cl;
+  document.querySelectorAll('#langs button').forEach(function(b){ b.classList.toggle('on', b.dataset.l===lang); });
+  var nm = get(K.n) || t.hi;
+  var ag = get(K.a);
+  $('hiName').textContent = t.hi + ', ' + nm;
+  $('hiAge').textContent  = ag ? t.age.replace('{A}', ag) : '';
+  if(MS.indexOf(days) > -1){
+    $('badgeWrap').innerHTML = '<span class="badge">★ ' + t.ms + ' ★</span>';
+  } else { $('badgeWrap').innerHTML = ''; }
+  var go=function(){ draw(); };
+  if(document.fonts && document.fonts.load){
+    Promise.all([document.fonts.load("800 60px 'Noto Sans Devanagari'"),document.fonts.load("500 40px 'Noto Sans Devanagari'")]).then(go,go);
+  } else go();
+  draw();
+}
+function tick(){ var d=calc(); if(d!==days){ days=d; if(d>high()) set(K.h,String(d)); draw(); ui(); } }
+function toast(m){ var e=$('toast'); e.textContent=m; e.classList.add('show'); setTimeout(function(){ e.classList.remove('show'); },2500); }
+function share(){
+  cv.toBlob(function(b){
+    var name='day-'+days+'.png', f;
+    try{ f=new File([b],name,{type:'image/png'}); }catch(e){ f=null; }
+    if(f && navigator.canShare && navigator.canShare({files:[f]})){
+      navigator.share({files:[f],title:T[lang].t}).catch(function(){});
+    } else {
+      var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
+      toast(T[lang].dl);
+    }
+  },'image/png');
+}
+function openM(){ var h=high(), t=T[lang]; $('mR').textContent = h>0 ? t.mr2.replace('{N}',h) : ''; $('ov').classList.add('show'); }
+function closeM(){ $('ov').classList.remove('show'); }
+document.querySelectorAll('#langs button').forEach(function(b){ b.addEventListener('click', function(){ lang=b.dataset.l; set(K.l,lang); ui(); }); });
+$('shBtn').addEventListener('click', share);
+$('slBtn').addEventListener('click', openM);
+$('clBtn').addEventListener('click', closeM);
+$('ov').addEventListener('click', function(e){ if(e.target===$('ov')) closeM(); });
+$('goBtn').addEventListener('click', function(){ set(K.s, today().toISOString()); days=0; closeM(); tick(); });
+document.addEventListener('visibilitychange', function(){ if(!document.hidden) tick(); });
+setInterval(tick,60000);
+
+/* === Registration guard === */
+if(!get(K.s) || !get(K.n)){ location.replace('./register.html'); return; }
+
+var sl = get(K.l); lang = (sl && T[sl]) ? sl : 'mr';
+days = calc(); if(days > high()) set(K.h, String(days));
+ui();
+
+/* === Notification permission (once) === */
+if('Notification' in window && Notification.permission === 'default'){
+  setTimeout(function(){ Notification.requestPermission(); }, 5000);
+}
+
+/* === Register service worker === */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
+}
+})();
+</script>
+</body>
+</html>
