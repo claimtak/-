@@ -1,85 +1,100 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="description" content="मी आजपासून दारू सोडली - Sobriety Day Counter">
-    <meta name="theme-color" content="#1a1a2e">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="description" content="मी आजपासून दारू सोडली - Sobriety Day Counter">
+<meta name="theme-color" content="#1a1a2e">
 
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="दारू सोडली">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="दारू सोडली">
 
-    <title>मी आजपासून दारू सोडली</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>मी आजपासून दारू सोडली</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
 
-        <!-- Branding -->
-        <header>
-            <div class="brand">
-                <span class="brand-name">claimtak.in</span>
-                <span class="divider">|</span>
-                <span class="brand-name">punepoona.in</span>
-            </div>
-        </header>
+<!-- Confetti canvas (पूर्ण screen) -->
+<canvas id="confettiCanvas"></canvas>
 
-        <!-- Language Switcher -->
-        <div class="lang-switch" role="tablist">
-            <button class="lang-btn active" data-lang="mr" type="button">मराठी</button>
-            <button class="lang-btn" data-lang="hi" type="button">हिंदी</button>
-            <button class="lang-btn" data-lang="en" type="button">English</button>
+<div class="container">
+
+    <header>
+        <div class="brand">
+            <span class="brand-name">claimtak.in</span>
+            <span class="divider">|</span>
+            <span class="brand-name">punepoona.in</span>
         </div>
+    </header>
 
-        <!-- Title -->
-        <h1 class="app-title" id="appTitle">मी आजपासून दारू सोडली</h1>
+    <div class="lang-switch" role="tablist">
+        <button class="lang-btn active" data-lang="mr" type="button">मराठी</button>
+        <button class="lang-btn" data-lang="hi" type="button">हिंदी</button>
+        <button class="lang-btn" data-lang="en" type="button">English</button>
+    </div>
 
-        <!-- Confidence Badge -->
-        <div class="confidence-badge" id="confidenceBadge">तुमचा प्रवास सुरू झाला आहे 🌱</div>
+    <h1 class="app-title" id="appTitle">मी आजपासून दारू सोडली</h1>
 
-        <!-- Days Counter -->
-        <div class="counter-box" id="counterBox">
-            <div class="days-count" id="daysCount">0</div>
-            <div class="days-label" id="daysLabel">दिवस</div>
-        </div>
+    <div class="confidence-badge" id="confidenceBadge">तुमचा प्रवास सुरू झाला आहे 🌱</div>
 
-        <!-- Motivation Message -->
-        <div class="motivation">
-            <p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p>
-        </div>
+    <!-- Counter Box — यातच जादू दिसेल -->
+    <div class="counter-box" id="counterBox">
 
-        <!-- Download App Button -->
-        <button id="installBtn" class="install-btn" type="button" style="display:none;">
-            📲 <span id="installBtnText">ॲप डाउनलोड करा</span>
-        </button>
+        <!-- Rainbow particles (background) -->
+        <div class="rainbow-particles" id="rainbowParticles"></div>
 
-        <!-- Manual install hint (iOS साठी) -->
-        <div id="iosHint" class="ios-hint" style="display:none;">
-            📱 iPhone/iPad वापरताय? <strong>Share</strong> → <strong>"Add to Home Screen"</strong> निवडा.
-        </div>
+        <!-- Fireworks bursts -->
+        <div class="fireworks" id="fireworks"></div>
 
-        <!-- Installed confirmation -->
-        <div id="installedMsg" class="installed-msg" style="display:none;">
-            ✅ ॲप इन्स्टॉल झालं! आता होम स्क्रीनवरच्या आयकॉनवर क्लिक करा.
-        </div>
+        <!-- Main days number -->
+        <div class="days-count" id="daysCount">1</div>
+        <div class="days-label" id="daysLabel">दिवस</div>
 
-        <!-- Footer -->
-        <footer>
-            <p class="footer-brand">
-                Powered by
-                <a href="https://claimtak.in" target="_blank" rel="noopener">claimtak.in</a> &
-                <a href="https://punepoona.in" target="_blank" rel="noopener">punepoona.in</a>
-            </p>
-        </footer>
+        <!-- Sparkles -->
+        <div class="sparkles" id="sparkles"></div>
+
+        <!-- Daily emoji magic -->
+        <div class="magic-emoji" id="magicEmoji">🌱</div>
+
+        <!-- Daily unique message -->
+        <div class="daily-magic" id="dailyMagic">आजचा दिवस खास आहे!</div>
+
+        <!-- Milestone badge (7, 30, 90, 365) -->
+        <div class="milestone-badge" id="milestoneBadge" style="display:none;"></div>
 
     </div>
 
-    <script src="script.js"></script>
+    <div class="motivation">
+        <p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p>
+    </div>
+
+    <button id="installBtn" class="install-btn" type="button" style="display:none;">
+        📲 <span id="installBtnText">ॲप डाउनलोड करा</span>
+    </button>
+
+    <div id="iosHint" class="ios-hint" style="display:none;">
+        📱 iPhone/iPad? <strong>Share</strong> → <strong>Add to Home Screen</strong> निवडा.
+    </div>
+
+    <div id="installedMsg" class="installed-msg" style="display:none;">
+        ✅ ॲप इन्स्टॉल झालं!
+    </div>
+
+    <footer>
+        <p class="footer-brand">
+            Powered by
+            <a href="https://claimtak.in" target="_blank" rel="noopener">claimtak.in</a> &
+            <a href="https://punepoona.in" target="_blank" rel="noopener">punepoona.in</a>
+        </p>
+    </footer>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
