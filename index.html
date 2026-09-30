@@ -18,7 +18,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     body {
       background-color: #f8fafc;
@@ -41,29 +41,29 @@
     }
     .cover-img {
       width: 100%;
-      max-width: 280px;
+      max-width: 260px;
       border-radius: 16px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     h1 {
-      font-size: 1.7rem;
+      font-size: 1.85rem;
       color: #b91c1c;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       font-weight: 800;
     }
     .counter-box {
       background-color: #fee2e2;
       color: #991b1b;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 24px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 28px;
       display: inline-block;
     }
     
-    /* थेट होम पेजवर दिसणारे इन्स्टॉल बटन */
+    /* इन्स्टॉल बटन */
     .btn-install {
       background-color: #dc2626;
       color: #ffffff;
@@ -75,8 +75,8 @@
       cursor: pointer;
       width: 100%;
       max-width: 320px;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-      display: block; /* हे बटन स्क्रीनवर कायम दिसेल */
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+      display: none; /* आधी लपवून ठेवले जाईल, पात्र असल्यास JS द्वारे दिसेल */
       margin-bottom: 14px;
       transition: transform 0.1s, background-color 0.2s;
     }
@@ -84,19 +84,26 @@
       transform: scale(0.98);
       background-color: #b91c1c;
     }
+
+    /* पुढे जा / नोंदणी बटन */
     .btn-start {
       background-color: #f1f5f9;
-      color: #475569;
+      color: #334155;
       border: 1px solid #cbd5e1;
       text-decoration: none;
-      padding: 12px 24px;
+      padding: 14px 24px;
       border-radius: 50px;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-block;
       width: 100%;
       max-width: 320px;
-      font-size: 1rem;
+      font-size: 1.05rem;
+      transition: background-color 0.2s;
     }
+    .btn-start:active {
+      background-color: #e2e8f0;
+    }
+
     footer {
       margin-top: 32px;
       padding-top: 16px;
@@ -122,12 +129,12 @@
       ५,२३,८४७+ लोकांनी संकल्प केला
     </div>
 
-    <!-- होम पेजवरील मुख्य Install Button -->
+    <!-- PWA Install Button -->
     <button id="installBtn" class="btn-install">
       📲 ॲप इन्स्टॉल करा
     </button>
 
-    <!-- थेट वेबवर वापरण्यासाठी पर्याय -->
+    <!-- थेट ॲप सुरू करण्यासाठी पर्याय -->
     <a href="./register.html" class="btn-start">वेबवर पुढे जा &rarr;</a>
   </div>
 
@@ -143,7 +150,11 @@
     let deferredPrompt = null;
     const installBtn = document.getElementById('installBtn');
 
-    // १. Service Worker नोंदणी
+    // १. ॲप आधीच इन्स्टॉल झालेले आहे का ते तपासणे
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isAlreadyInstalled = localStorage.getItem('pwaInstalled') === 'true';
+
+    // २. Service Worker नोंदणी करणे
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -152,30 +163,56 @@
       });
     }
 
-    // २. ब्राऊझरचा इन्स्टॉल इव्हेंट कॅप्चर करणे
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
+    // ३. इन्स्टॉल नसेल तरच बटन दाखवणे
+    if (!isStandalone && !isAlreadyInstalled) {
+      // ब्राऊझरचा इन्स्टॉल प्रॉम्प्ट पकडणे
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) {
+          installBtn.style.display = 'block';
+        }
+      });
 
-    // ३. बटणावर क्लिक झाल्यावर काय व्हावे
-    installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        // जर ब्राऊझरचा प्रॉम्प्ट तयार असेल तर थेट पॉपअप उघडा
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('User choice:', outcome);
-        deferredPrompt = null;
-      } else {
-        // जर प्रॉम्प्ट मिस झाला असेल, तर युझरला मेनूमधून इन्स्टॉल करण्याची सोपी सूचना द्या
-        alert('ॲप इन्स्टॉल करण्यासाठी:\nवर उजव्या बाजूला ३ डॉट्सवर (⋮) क्लिक करा आणि "Install and create shortcut" निवडा.');
+      // फॉलबॅक: जर इव्हेंट उशिरा आला तरी बटण दाखवा
+      setTimeout(() => {
+        if (!isStandalone && !isAlreadyInstalled && installBtn) {
+          installBtn.style.display = 'block';
+        }
+      }, 1000);
+    } else {
+      // ॲप आधीच इन्स्टॉल असल्यास बटन कायमचे बंद ठेवा
+      if (installBtn) {
+        installBtn.style.display = 'none';
       }
-    });
+    }
 
-    // ४. इन्स्टॉल पूर्ण झाल्यावर
+    // ४. बटण दाबल्यावर इन्स्टॉल पॉपअप उघडणे
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log('User choice:', outcome);
+          if (outcome === 'accepted') {
+            localStorage.setItem('pwaInstalled', 'true');
+            installBtn.style.display = 'none';
+          }
+          deferredPrompt = null;
+        } else {
+          // जर अंतर्गत इव्हेंट आधीच निघून गेला असेल तर सूचना
+          alert('ॲप इन्स्टॉल करण्यासाठी:\nवर उजव्या कोपऱ्यातील ३ डॉट्सवर (⋮) क्लिक करा आणि "Install and create shortcut" निवडा.');
+        }
+      });
+    }
+
+    // ५. ॲप यशस्वीरीत्या इन्स्टॉल झाल्यावर बटन बंद करणे आणि मेमरीत नोंद ठेवणे
     window.addEventListener('appinstalled', () => {
-      alert('ॲप यशस्वीरीत्या इन्स्टॉल झाले आहे!');
-      installBtn.style.display = 'none';
+      localStorage.setItem('pwaInstalled', 'true');
+      if (installBtn) {
+        installBtn.style.display = 'none';
+      }
+      console.log('ॲप इन्स्टॉल झाले असून बटन कायमचे लपवण्यात आले आहे.');
     });
   </script>
 </body>
