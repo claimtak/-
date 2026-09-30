@@ -1,5 +1,5 @@
 /* =====================================================
-   "मी आजपासून दारू सोडली" — Full Styles
+   "मी आजपासून दारू सोडली" — Full Styles (Modal FIXED)
    ===================================================== */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,7 +41,6 @@ body {
     z-index: 1;
 }
 
-/* ---------- Language Switch ---------- */
 .lang-switch {
     display: flex;
     justify-content: center;
@@ -72,7 +71,6 @@ body {
     box-shadow: 0 4px 14px rgba(231, 76, 60, 0.45);
 }
 
-/* ---------- Title ---------- */
 .app-title {
     font-size: 1.5rem;
     font-weight: 800;
@@ -85,7 +83,6 @@ body {
     background-clip: text;
 }
 
-/* ---------- Confidence Badge ---------- */
 .confidence-badge {
     display: block;
     text-align: center;
@@ -102,7 +99,6 @@ body {
     transition: all 0.6s ease;
 }
 
-/* ---------- Highest Record Badge ---------- */
 .record-badge {
     display: block;
     text-align: center;
@@ -124,7 +120,6 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- Counter Box ---------- */
 .counter-box {
     margin: 22px 0 16px;
     padding: 44px 20px 34px;
@@ -147,7 +142,6 @@ body {
     z-index: 1;
 }
 
-/* ---------- Rainbow Particles ---------- */
 .rainbow-particles {
     position: absolute;
     inset: 0;
@@ -170,7 +164,6 @@ body {
     100% { transform: translateY(-120px) scale(1.1); opacity: 0; }
 }
 
-/* ---------- Fireworks ---------- */
 .fireworks {
     position: absolute;
     inset: 0;
@@ -192,7 +185,6 @@ body {
     100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
 
-/* ---------- Days Count ---------- */
 .days-count {
     font-size: 6rem;
     font-weight: 800;
@@ -224,7 +216,6 @@ body {
     z-index: 3;
 }
 
-/* ---------- Sparkles ---------- */
 .sparkles {
     position: absolute;
     inset: 0;
@@ -244,7 +235,6 @@ body {
     50%      { opacity: 1; transform: scale(1.2) rotate(180deg); }
 }
 
-/* ---------- Magic Emoji ---------- */
 .magic-emoji {
     position: absolute;
     top: 14px;
@@ -260,7 +250,6 @@ body {
     50%      { transform: translateY(-8px) rotate(8deg); }
 }
 
-/* ---------- Daily Magic ---------- */
 .daily-magic {
     margin-top: 16px;
     padding: 10px 14px;
@@ -277,7 +266,6 @@ body {
     border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* ---------- Milestone Badge ---------- */
 .milestone-badge {
     margin-top: 12px;
     padding: 8px 16px;
@@ -300,7 +288,6 @@ body {
     100% { transform: scale(1); }
 }
 
-/* ---------- Slipped Button ---------- */
 .slipped-btn {
     display: flex;
     align-items: center;
@@ -325,11 +312,6 @@ body {
     transform: translateY(-1px);
 }
 
-.slipped-btn:active {
-    transform: translateY(0);
-}
-
-/* ---------- Motivation ---------- */
 .motivation {
     background: rgba(255, 255, 255, 0.05);
     border-left: 4px solid #f39c12;
@@ -345,7 +327,6 @@ body {
     line-height: 1.5;
 }
 
-/* ---------- Download Image Button ---------- */
 .download-image-btn {
     display: flex;
     align-items: center;
@@ -371,15 +352,10 @@ body {
     box-shadow: 0 14px 38px rgba(52, 152, 219, 0.55);
 }
 
-.download-image-btn:active {
-    transform: translateY(0);
-}
-
 .download-image-btn:disabled {
     cursor: wait;
 }
 
-/* ---------- Toast Message ---------- */
 .toast-message {
     position: fixed;
     bottom: 30px;
@@ -406,7 +382,6 @@ body {
     transform: translateX(-50%) translateY(0);
 }
 
-/* ---------- Install Button ---------- */
 .install-btn {
     display: flex;
     align-items: center;
@@ -458,7 +433,6 @@ body {
     font-weight: 600;
 }
 
-/* ---------- Footer ---------- */
 footer {
     text-align: center;
     padding-top: 16px;
@@ -468,9 +442,7 @@ footer {
     color: rgba(255, 255, 255, 0.55);
 }
 
-.footer-brand {
-    line-height: 1.9;
-}
+.footer-brand { line-height: 1.9; }
 
 .footer-brand a {
     color: #f39c12;
@@ -479,57 +451,62 @@ footer {
     padding: 0 2px;
 }
 
-.footer-brand a:hover {
-    text-decoration: underline;
-}
+.footer-brand a:hover { text-decoration: underline; }
 
 /* =====================================================
-   MODAL — "तू घसरलास"
+   MODAL — "तू घसरलास" (FULLY FIXED)
    ===================================================== */
 .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 10000;
-    animation: fadeInOverlay 0.4s ease;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: 100% !important;
+    background: rgba(0, 0, 0, 0.92) !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px !important;
+    margin: 0 !important;
+    z-index: 2147483647 !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
 }
 
 .modal-overlay.show {
-    display: flex;
-}
-
-@keyframes fadeInOverlay {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    display: flex !important;
 }
 
 .modal-card {
-    width: 100%;
-    max-width: 420px;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 2px solid rgba(231, 76, 60, 0.5);
-    border-radius: 24px;
-    padding: 30px 24px 24px;
-    text-align: center;
-    box-shadow: 0 25px 70px rgba(231, 76, 60, 0.4), 0 0 0 1px rgba(255,255,255,0.05) inset;
-    animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    max-height: 90vh;
-    overflow-y: auto;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    min-width: 260px !important;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+    border: 2px solid rgba(231, 76, 60, 0.5) !important;
+    border-radius: 24px !important;
+    padding: 30px 22px 24px !important;
+    text-align: center !important;
+    box-shadow: 0 25px 70px rgba(231, 76, 60, 0.4) !important;
+    animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    max-height: calc(100vh - 32px) !important;
+    max-height: calc(100dvh - 32px) !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
 }
 
 @keyframes modalPop {
-    0%   { transform: scale(0.85) translateY(30px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
+    0%   { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 .modal-icon {
-    font-size: 3.5rem;
+    font-size: 3rem;
     margin-bottom: 8px;
     animation: shake 0.8s ease;
 }
@@ -543,10 +520,10 @@ footer {
 }
 
 .modal-title {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     font-weight: 800;
     color: #e74c3c;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     text-shadow: 0 4px 20px rgba(231, 76, 60, 0.5);
     line-height: 1.3;
 }
@@ -554,37 +531,37 @@ footer {
 .modal-divider {
     height: 2px;
     background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.5), transparent);
-    margin: 0 auto 20px;
+    margin: 0 auto 18px;
     width: 60%;
 }
 
 .modal-message {
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: rgba(255, 255, 255, 0.9);
     line-height: 1.6;
     font-weight: 500;
 }
 
 .modal-pause {
-    margin: 16px 0;
-    font-size: 1.1rem;
+    margin: 14px 0;
+    font-size: 1.05rem;
     color: rgba(255, 255, 255, 0.6);
     font-style: italic;
     letter-spacing: 2px;
 }
 
 .modal-hope {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 800;
     background: linear-gradient(90deg, #f39c12, #f1c40f);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1.5;
-    padding: 16px 8px;
+    padding: 14px 6px;
     border-top: 1px dashed rgba(243, 156, 18, 0.4);
     border-bottom: 1px dashed rgba(243, 156, 18, 0.4);
-    margin: 12px 0 20px;
+    margin: 10px 0 18px;
 }
 
 .modal-record {
@@ -597,6 +574,7 @@ footer {
     font-weight: 700;
     margin-bottom: 18px;
     line-height: 1.5;
+    white-space: pre-line;
 }
 
 .modal-buttons {
@@ -626,20 +604,10 @@ footer {
     box-shadow: 0 10px 25px rgba(46, 204, 113, 0.4);
 }
 
-.modal-btn.restart:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 32px rgba(46, 204, 113, 0.5);
-}
-
 .modal-btn.close {
     background: rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.modal-btn.close:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
 }
 
 /* ---------- Mobile ---------- */
@@ -652,7 +620,8 @@ footer {
     .counter-box { padding: 38px 16px 28px; }
     .magic-emoji { font-size: 1.6rem; top: 10px; right: 14px; }
     .daily-magic { font-size: 0.82rem; }
-    .modal-title { font-size: 1.5rem; }
-    .modal-icon { font-size: 2.8rem; }
-    .modal-card { padding: 24px 18px 20px; }
-       }
+    .modal-title { font-size: 1.4rem; }
+    .modal-icon { font-size: 2.5rem; }
+    .modal-card { padding: 22px 16px 18px; }
+    .modal-overlay { padding: 10px !important; }
+   }
