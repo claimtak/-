@@ -1,7 +1,6 @@
 /* =====================================================
    "मी आजपासून दारू सोडली" — 3 भाषांमध्ये
-   फक्त दिवस मोजणारा काउंटर
-   दिवस वाढत गेल्यावर confidence वाढतो (रंग + संदेश)
+   + PWA install button
    ===================================================== */
 
 (function () {
@@ -16,6 +15,9 @@
         mr: {
             title: "मी आजपासून दारू सोडली",
             daysLabel: "दिवस",
+            installBtn: "ॲप डाउनलोड करा",
+            installedMsg: "✅ ॲप इन्स्टॉल झालं! आता होम स्क्रीनवरच्या आयकॉनवर क्लिक करा.",
+            iosHint: "📱 iPhone/iPad वापरताय? Share → \"Add to Home Screen\" निवडा.",
             confidences: [
                 "तुमचा प्रवास सुरू झाला आहे 🌱",
                 "तुमचा आत्मविश्वास वाढत आहे 💪",
@@ -39,6 +41,9 @@
         hi: {
             title: "मैंने आज से शराब छोड़ दी",
             daysLabel: "दिन",
+            installBtn: "ऐप डाउनलोड करें",
+            installedMsg: "✅ ऐप इंस्टॉल हो गया! अब होम स्क्रीन के आइकन पर क्लिक करें।",
+            iosHint: "📱 iPhone/iPad? Share → \"Add to Home Screen\" चुनें।",
             confidences: [
                 "आपकी यात्रा शुरू हो गई है 🌱",
                 "आपका आत्मविश्वास बढ़ रहा है 💪",
@@ -62,6 +67,9 @@
         en: {
             title: "I Quit Alcohol From Today",
             daysLabel: "Days",
+            installBtn: "Download App",
+            installedMsg: "✅ App installed! Now tap the icon on your home screen.",
+            iosHint: "📱 On iPhone/iPad? Tap Share → \"Add to Home Screen\".",
             confidences: [
                 "Your journey has begun 🌱",
                 "Your confidence is growing 💪",
@@ -84,7 +92,7 @@
         }
     };
 
-    // ---------- Confidence Levels (दिवस वाढत गेल्यावर रंग बदलतो) ----------
+    // ---------- Confidence Levels ----------
     const confidenceLevels = [
         { min: 0,    c1: '#95a5a6', c2: '#7f8c8d', glow: 'rgba(149,165,166,0.45)' },
         { min: 1,    c1: '#3498db', c2: '#2980b9', glow: 'rgba(52,152,219,0.50)'  },
@@ -97,7 +105,7 @@
         { min: 1095, c1: '#ff6b6b', c2: '#f39c12', glow: 'rgba(255,107,107,0.65)' }
     ];
 
-    // ---------- DOM Elements ----------
+    // ---------- DOM ----------
     const appTitleEl   = document.getElementById('appTitle');
     const daysCountEl  = document.getElementById('daysCount');
     const daysLabelEl  = document.getElementById('daysLabel');
@@ -105,11 +113,16 @@
     const confidenceEl = document.getElementById('confidenceBadge');
     const counterBox   = document.getElementById('counterBox');
     const langButtons  = document.querySelectorAll('.lang-btn');
+    const installBtn   = document.getElementById('installBtn');
+    const installBtnText = document.getElementById('installBtnText');
+    const iosHint      = document.getElementById('iosHint');
+    const installedMsg = document.getElementById('installedMsg');
 
     // ---------- State ----------
     let currentLang = 'mr';
     let currentDays = -1;
     let tickTimerId = null;
+    let deferredPrompt = null;
 
     // ---------- Helpers ----------
     function getTodayStart() {
@@ -123,16 +136,11 @@
             const d = new Date(raw);
             if (!isNaN(d.getTime())) return d;
         }
-        // पहिल्यांदा ॲप उघडलं → आजचा दिवस 00:00 वाजता सेट
         const start = getTodayStart();
         localStorage.setItem(STORAGE_KEY_START, start.toISOString());
         return start;
     }
 
-    /**
-     * पहिल्या दिवशी = 1 (म्हणजे आज = Day 1)
-     * उद्या = 2, परवा = 3 ...
-     */
     function calculateDays() {
         const start = getStartDate();
         const today = getTodayStart();
@@ -160,108 +168,180 @@
             btn.classList.toggle('active', btn.dataset.lang === lang);
         });
 
-        appTitleEl.textContent  = translations[lang].title;
-        daysLabelEl.textContent = translations[lang].daysLabel;
+        const t = translations[lang];
+        appTitleEl.textContent  = t.title;
+        daysLabelEl.textContent = t.daysLabel;
+        if (installBtnText) installBtnText.textContent = t.installBtn;
+        if (installedMsg)   installedMsg.textContent   = t.installedMsg;
+        if (iosHint)        iosHint.textContent        = t.iosHint;
 
-        // Force re-apply confidence + motivation in new language
         applyConfidenceAndMotivation(currentDays, true);
     }
 
-    function applyConfidenceAndMotivation(days, force) {
+    function applyConfidenceAndMotivation(days) {
         const t = translations[currentLang];
         if (!t) return;
 
         const safeDays = Math.max(0, days);
 
-        // Confidence message — दर 30 दिवसांनी पुढचा
         const confIdx = Math.min(
             t.confidences.length - 1,
             Math.floor(safeDays / 30)
         );
         confidenceEl.textContent = t.confidences[confIdx];
 
-        // Motivation — दिवसावर आधारित (रोज बदलतो)
         const motIdx = safeDays % t.motivations.length;
         motivationEl.textContent = t.motivations[motIdx];
 
-        // रंग
         const level = getConfidenceLevel(safeDays);
         counterBox.style.background = 'linear-gradient(135deg, ' + level.c1 + ', ' + level.c2 + ')';
         counterBox.style.boxShadow  = '0 15px 45px ' + level.glow;
 
         confidenceEl.style.borderColor = level.c1;
         confidenceEl.style.color       = level.c1;
-        confidenceEl.style.background  = 'rgba(243, 156, 18, 0.12)';
     }
 
     function updateDays() {
         const days = calculateDays();
-
         if (days !== currentDays) {
             const prev = currentDays;
             currentDays = days;
-
             daysCountEl.textContent = days.toLocaleString('en-IN');
 
-            // Bump animation — फक्त जेव्हा दिवस वाढला तेव्हा
             if (prev !== -1 && days > prev) {
                 daysCountEl.classList.remove('bump');
-                void daysCountEl.offsetWidth; // reflow to restart animation
+                void daysCountEl.offsetWidth;
                 daysCountEl.classList.add('bump');
             }
-
-            applyConfidenceAndMotivation(days, false);
+            applyConfidenceAndMotivation(days);
         }
     }
 
-    // ---------- Midnight check ----------
+    // ---------- PWA Install ----------
+    function isStandalone() {
+        return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+            || window.navigator.standalone === true;
+    }
+
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+
+    // beforeinstallprompt — Android/Chrome/Edge मध्ये
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) installBtn.style.display = 'inline-flex';
+    });
+
+    // आधीच install झालं असेल तर बटण लपवा
+    window.addEventListener('appinstalled', function () {
+        deferredPrompt = null;
+        if (installBtn) installBtn.style.display = 'none';
+        if (installedMsg) {
+            installedMsg.style.display = 'block';
+            setTimeout(function () {
+                installedMsg.style.display = 'none';
+            }, 6000);
+        }
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', async function () {
+            // Android / Chrome / Edge
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const choice = await deferredPrompt.userChoice;
+                if (choice && choice.outcome === 'accepted') {
+                    if (installedMsg) {
+                        installedMsg.style.display = 'block';
+                        setTimeout(function () {
+                            installedMsg.style.display = 'none';
+                        }, 6000);
+                    }
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+                return;
+            }
+
+            // iOS — manual instructions
+            if (isIOS()) {
+                alert(translations[currentLang].iosHint.replace(/<[^>]*>/g, ''));
+                return;
+            }
+
+            // Browser ने PWA support देत नसेल
+            alert(
+                currentLang === 'mr'
+                    ? 'तुमचा ब्राउझर हे आपोआप इन्स्टॉल करू शकत नाही. कृपया Chrome / Edge वापरा किंवा ब्राउझर मेनू → "Install app" / "Add to Home screen" निवडा.'
+                    : currentLang === 'hi'
+                    ? 'आपका ब्राउज़र इसे अपने आप इंस्टॉल नहीं कर सकता। कृपया Chrome / Edge उपयोग करें या ब्राउज़र मेनू → "Install app" / "Add to Home screen" चुनें।'
+                    : 'Your browser cannot install this automatically. Please use Chrome / Edge or use the browser menu → "Install app" / "Add to Home screen".'
+            );
+        });
+    }
+
+    // iOS — install button मॅन्युअली दाखवा
+    if (isIOS() && !isStandalone()) {
+        if (installBtn) installBtn.style.display = 'inline-flex';
+        if (iosHint)    iosHint.style.display = 'block';
+    }
+
+    // Standalone मध्ये चालू असेल तर काहीही दाखवू नका
+    if (isStandalone()) {
+        if (installBtn) installBtn.style.display = 'none';
+        if (iosHint)    iosHint.style.display = 'none';
+    }
+
+    // ---------- Service Worker register ----------
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(function (reg) {
+                    console.log('Service Worker registered:', reg.scope);
+                })
+                .catch(function (err) {
+                    console.warn('Service Worker failed:', err);
+                });
+        });
+    }
+
+    // ---------- Midnight tick ----------
     function scheduleMidnightTick() {
         if (tickTimerId) clearInterval(tickTimerId);
-        // दर 30 सेकंदाला तपासा — मध्यरात्रीनंतर दिवस बदलतो
         tickTimerId = setInterval(updateDays, 30 * 1000);
     }
 
     // ---------- Init ----------
     function init() {
-        // Language load
         const savedLang = localStorage.getItem(STORAGE_KEY_LANG);
         if (savedLang && translations[savedLang]) {
             currentLang = savedLang;
         } else {
-            // Browser language detect करा
             const nav = (navigator.language || 'mr').toLowerCase();
             if (nav.indexOf('hi') === 0) currentLang = 'hi';
             else if (nav.indexOf('en') === 0) currentLang = 'en';
             else currentLang = 'mr';
         }
 
-        // Language button listeners
         langButtons.forEach(function (btn) {
             btn.addEventListener('click', function () {
                 setLanguage(btn.dataset.lang);
             });
         });
 
-        // Start date ensure
         getStartDate();
-
-        // First render
         setLanguage(currentLang);
         updateDays();
-
-        // Midnight tick check
         scheduleMidnightTick();
 
-        // Tab पुन्हा active झाल्यावर update
         document.addEventListener('visibilitychange', function () {
             if (!document.hidden) updateDays();
         });
-
-        // Window focus झाल्यावर update
         window.addEventListener('focus', updateDays);
     }
 
-    // ---------- Start ----------
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
