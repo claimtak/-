@@ -6,14 +6,10 @@
 <meta name="description" content="मी आजपासून दारू सोडली - Sobriety Day Counter">
 <meta name="theme-color" content="#1a1a2e">
 
-<!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
-
-<!-- Favicon (PNG आयकॉन) -->
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
-<!-- PWA Meta -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="दारू सोडली">
@@ -26,7 +22,6 @@
 </head>
 <body>
 
-<!-- Confetti canvas (पूर्ण screen) -->
 <canvas id="confettiCanvas"></canvas>
 
 <div class="container">
@@ -41,32 +36,25 @@
 
     <div class="confidence-badge" id="confidenceBadge">तुमचा प्रवास सुरू झाला आहे 🌱</div>
 
-    <!-- Counter Box — यातच जादू दिसेल -->
+    <!-- Highest Record Badge -->
+    <div class="record-badge" id="recordBadge" style="display:none;"></div>
+
+    <!-- Counter Box -->
     <div class="counter-box" id="counterBox">
-
-        <!-- Rainbow particles (background) -->
         <div class="rainbow-particles" id="rainbowParticles"></div>
-
-        <!-- Fireworks bursts -->
         <div class="fireworks" id="fireworks"></div>
-
-        <!-- Main days number -->
         <div class="days-count" id="daysCount">1</div>
         <div class="days-label" id="daysLabel">दिवस</div>
-
-        <!-- Sparkles -->
         <div class="sparkles" id="sparkles"></div>
-
-        <!-- Daily emoji magic -->
         <div class="magic-emoji" id="magicEmoji">🌱</div>
-
-        <!-- Daily unique message -->
         <div class="daily-magic" id="dailyMagic">आजचा दिवस खास आहे!</div>
-
-        <!-- Milestone badge (7, 30, 90, 365) -->
         <div class="milestone-badge" id="milestoneBadge" style="display:none;"></div>
-
     </div>
+
+    <!-- Slipped Button -->
+    <button id="slippedBtn" class="slipped-btn" type="button">
+        😔 <span id="slippedBtnText">आज मी घसरलो</span>
+    </button>
 
     <div class="motivation">
         <p class="quote" id="motivationText">प्रत्येक दिवस हा तुमचा विजय आहे! 🏆</p>
@@ -93,6 +81,38 @@
         </p>
     </footer>
 
+</div>
+
+<!-- ==================== SLIPPED MODAL ==================== -->
+<div class="modal-overlay" id="slippedModal">
+    <div class="modal-card">
+
+        <div class="modal-icon">🚨</div>
+
+        <h2 class="modal-title" id="modalTitle">तू घसरलास!</h2>
+
+        <div class="modal-divider"></div>
+
+        <p class="modal-message" id="modalLine1">आज तू स्वतःला विसरलास.</p>
+        <p class="modal-message" id="modalLine2">दारू जिंकली. तू हरलास.</p>
+
+        <p class="modal-pause">पण...</p>
+
+        <p class="modal-hope" id="modalHope">🏆 खरा योद्धा हरतो — पण शरण जात नाही.</p>
+
+        <!-- Highest Record shown here -->
+        <div class="modal-record" id="modalRecord" style="display:none;"></div>
+
+        <div class="modal-buttons">
+            <button class="modal-btn restart" id="restartBtn" type="button">
+                🔄 <span id="restartBtnText">पुन्हा सुरुवात कर</span>
+            </button>
+            <button class="modal-btn close" id="closeModalBtn" type="button">
+                ❌ <span id="closeBtnText">बंद कर</span>
+            </button>
+        </div>
+
+    </div>
 </div>
 
 <script src="script.js"></script>
