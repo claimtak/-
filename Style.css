@@ -1,0 +1,226 @@
+/* =====================================================
+   "मी आजपासून दारू सोडली" — Styles
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 1.2s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    width: 100%;
+    max-width: 560px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 26px 24px 22px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Header / Branding ---------- */
+header {
+    text-align: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-wrap: wrap;
+}
+
+.brand-name {
+    background: linear-gradient(90deg, #f39c12, #e74c3c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+}
+
+.divider {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- Language Switcher ---------- */
+.lang-switch {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 18px 0 6px;
+    flex-wrap: wrap;
+}
+
+.lang-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.75);
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.lang-btn.active {
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(231, 76, 60, 0.45);
+}
+
+/* ---------- Title ---------- */
+.app-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.4;
+    background: linear-gradient(90deg, #ffffff, #f39c12);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: opacity 0.3s ease;
+}
+
+/* ---------- Confidence Badge ---------- */
+.confidence-badge {
+    display: block;
+    text-align: center;
+    margin: 14px auto 4px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    background: rgba(243, 156, 18, 0.15);
+    color: #f39c12;
+    border: 1px solid rgba(243, 156, 18, 0.3);
+    width: fit-content;
+    max-width: 100%;
+    transition: all 0.6s ease;
+}
+
+/* ---------- Counter ---------- */
+.counter-box {
+    margin: 22px 0;
+    padding: 44px 20px;
+    border-radius: 26px;
+    text-align: center;
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    box-shadow: 0 15px 45px rgba(149, 165, 166, 0.45);
+    transition: all 1.2s ease;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.02); }
+}
+
+.days-count {
+    font-size: 6rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    transition: transform 0.4s ease;
+}
+
+.days-count.bump {
+    animation: bump 0.6s ease;
+}
+
+@keyframes bump {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.12); }
+    100% { transform: scale(1); }
+}
+
+.days-label {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 10px;
+    opacity: 0.95;
+    letter-spacing: 1px;
+}
+
+/* ---------- Motivation ---------- */
+.motivation {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid #f39c12;
+    padding: 16px 18px;
+    border-radius: 12px;
+    transition: all 0.5s ease;
+}
+
+.quote {
+    font-style: italic;
+    font-size: 0.98rem;
+    color: rgba(255, 255, 255, 0.92);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* ---------- Footer ---------- */
+footer {
+    text-align: center;
+    padding-top: 18px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-brand a {
+    color: #f39c12;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.footer-brand a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 500px) {
+    body { padding: 12px; }
+    .app-title { font-size: 1.25rem; }
+    .days-count { font-size: 4.2rem; }
+    .container { padding: 20px 16px; border-radius: 20px; }
+    .lang-btn { padding: 6px 12px; font-size: 0.78rem; }
+    .counter-box { padding: 34px 16px; }
+    .confidence-badge { font-size: 0.8rem; }
+  }
